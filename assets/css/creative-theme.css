@@ -1,7 +1,12 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic&display=swap');
+
 /* Shared homepage visual theme for inner pages */
 
 body.creative-theme {
     font-family: Merriweather, Georgia, serif;
+    --accent: #f05f40;
+    --accent2: #e64a2e;
 }
 
 body.creative-theme h1,
@@ -16,11 +21,6 @@ body.creative-theme .btn,
 body.creative-theme .eyebrow,
 body.creative-theme .small-label {
     font-family: "Open Sans", Arial, sans-serif;
-}
-
-body.creative-theme {
-    --accent: #f05f40;
-    --accent2: #e64a2e;
 }
 
 body.creative-theme .text-primary {
@@ -57,23 +57,23 @@ body.creative-theme .course-chip {
     color: #f05f40;
 }
 
-/* Homepage-style transparent -> white scrolling navbar */
+/* Homepage-style navbar shrink animation */
 body.creative-theme #mainNav {
     background-color: transparent;
     border-bottom: 1px solid transparent;
-    transition: background-color .2s ease, box-shadow .2s ease, padding .2s ease;
+    transition: all .2s ease;
     padding-top: 1rem;
     padding-bottom: 1rem;
 }
 
 body.creative-theme #mainNav .navbar-brand {
-    color: #fff;
+    color: #212529;
     font-weight: 800;
-    transition: color .2s ease, font-size .2s ease;
+    transition: color .2s ease;
 }
 
 body.creative-theme #mainNav .nav-link {
-    color: rgba(255, 255, 255, .9);
+    color: #212529;
     font-weight: 700;
     transition: color .2s ease;
 }
@@ -84,13 +84,13 @@ body.creative-theme #mainNav .nav-link:focus {
 }
 
 body.creative-theme #mainNav .navbar-toggler {
-    color: #fff;
-    border-color: rgba(255, 255, 255, .35);
+    color: #212529;
+    border-color: rgba(33, 37, 41, .15);
 }
 
 body.creative-theme #mainNav.navbar-shrink {
     background-color: #fff;
-    border-bottom-color: rgba(33, 37, 41, .08);
+    border-bottom-color: rgba(33, 37, 41, .1);
     box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .08);
     padding-top: .5rem;
     padding-bottom: .5rem;
@@ -109,9 +109,10 @@ body.creative-theme #mainNav.navbar-shrink .nav-link:focus {
     color: #f05f40;
 }
 
-body.creative-theme #mainNav.navbar-shrink .navbar-toggler {
-    color: #212529;
-    border-color: rgba(33, 37, 41, .15);
+@media (min-width: 992px) {
+    body.creative-theme #mainNav .nav-link {
+        padding: .5rem 1rem;
+    }
 }
 
 @media (max-width: 991.98px) {
@@ -121,10 +122,7 @@ body.creative-theme #mainNav.navbar-shrink .navbar-toggler {
         box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .08);
     }
 
-    body.creative-theme #mainNav .navbar-brand {
-        color: #f05f40;
-    }
-
+    body.creative-theme #mainNav .navbar-brand,
     body.creative-theme #mainNav .nav-link {
         color: #212529;
     }

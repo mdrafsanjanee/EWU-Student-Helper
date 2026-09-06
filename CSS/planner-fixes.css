@@ -1,4 +1,3 @@
-/* Planner course/section pane: keep the list independently scrollable. */
 .planner-courses {
   min-height: 0;
   height: calc(100vh - 220px);
@@ -15,6 +14,10 @@
   overflow-x: hidden !important;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+}
+
+.course-list > .dept-block {
+  flex-shrink: 0;
 }
 
 @media (max-width: 1050px) {

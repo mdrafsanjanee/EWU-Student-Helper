@@ -757,6 +757,18 @@ body {
     width: 1344px
 }
 
+.page-footer {
+    margin-top: 40px;
+    padding: 24px 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    border-top: 1px solid var(--line);
+    background: rgba(255, 255, 255, .7);
+}
+
 @media(max-width:1050px) {
     .planner-layout {
         grid-template-columns: 1fr

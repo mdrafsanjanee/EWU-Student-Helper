@@ -200,7 +200,30 @@ const COURSES = {
   ECM001: ["Elective Course 1", 3, []],
   ECM002: ["Elective Course 2", 3, []],
   ECM003: ["Elective Course 3", 3, []],
-  ECM004: ["Elective Course 4", 3, []]
+  ECM004: ["Elective Course 4", 3, []],
+
+  // ---- MATH: ECM elective-module pool (MATH_ECM_POOL) ----
+  // Titles/credits confirmed from the official EWU MPS "Category of Courses" page
+  // (fse.ewubd.edu/mathematical-physical-science/category-courses). That page and
+  // the department's Course Description page do not publish prerequisites for this
+  // 16-course pool (same pattern as the uploaded PDF's MATH420-490 electives, whose
+  // "Prerequisites:" fields are also all blank) — so prereqs are left empty ([]).
+  MAT421: ["Mathematical Modeling in Biology", 3, []],
+  MAT422: ["Mathematical Modeling in Finance and Business Management", 3, []],
+  MAT424: ["Applied Analysis", 3, []],
+  MAT425: ["Econometrics", 3, []],
+  MAT431: ["Fuzzy Mathematics", 3, []],
+  MAT432: ["Theory of Lattices", 3, []],
+  MAT433: ["Integral Equations", 3, []],
+  MAT434: ["Asymptotic Analysis and Perturbation Methods", 3, []],
+  MAT451: ["Plasma Physics", 3, []],
+  MAT452: ["Quantum Mechanics", 3, []],
+  MAT453: ["Classical Mechanics and Special Theory of Relativity", 3, []],
+  MAT454: ["Thermodynamics", 3, []],
+  MAT461: ["Actuarial Mathematics", 3, []],
+  MAT462: ["Stochastic Calculus", 3, []],
+  MAT471: ["Theory of Groups", 3, []],
+  MAT472: ["Theory of Rings and Modules", 3, []]
 };
 
 const GENERAL_ED_POOL = ["ACT101", "BUS231", "BUS321", "ECO101", "FIN101", "GEN201", "GEN202", "GEN203", "GEN204", "GEN205", "GEN207", "GEN208", "GEN209", "GEN210", "GEN211", "GEN212", "GEN213", "GEN214", "GEN215", "GEN216", "GEN217", "GEN218", "GEN220", "GEN221", "GEN223", "GEN224", "GEN239", "JPN7101", "MGT321", "MGT337", "MKT101", "POP201", "POP202", "POP203", "SOC211", "SOC217", "SOC317"];

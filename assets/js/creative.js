@@ -28,7 +28,7 @@
 
       var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
 
-      if (scrollTop > 50) {
+      if (scrollTop > 20) {
         mainNav.classList.add("navbar-shrink");
       } else {
         mainNav.classList.remove("navbar-shrink");

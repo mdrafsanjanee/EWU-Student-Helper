@@ -121,27 +121,111 @@ const COURSES = {
 
   // ---- EEE: Non-Engineering elective pool (3 credits) — from the curriculum export ----
   ECO7101: ["Principles of Microeconomics", 3, []],
-  MIS101: ["Introduction to Management Information System", 3, []]
+  MIS101: ["Introduction to Management Information System", 3, []],
+
+  // ---- MATH (B.Sc. Hons in Mathematics) core sequence ----
+
+  CS116: ["Programming Language I", 4, []],
+  CS217: ["Data Structures and Algorithms", 4, ["CS116"]],
+  CS312: ["Programming Language II", 4, ["CS116"]],
+  CS391: ["Introduction to Artificial Intelligence", 3, []],
+  MATH111: ["Fundamentals of Mathematics", 3, []],
+  MATH112: ["Calculus I", 3, []],
+  MATH114: ["Calculus II", 3, ["MATH112"]],
+  MATH115: ["Analytic Geometry and Vector Analysis", 3, []],
+  MATH116: ["Differential Equations I", 3, ["MATH112"]],
+  PHY212: ["Introduction Quantum Physics", 3, ["PHY109"]],
+  MATH211: ["Linear Algebra", 3, ["MATH112"]],
+  MATH212: ["Differential Equations II", 4, ["MATH116"]],
+  MATH214: ["Real Analysis", 3, ["MATH112"]],
+  MATH215: ["Abstract Algebra", 3, ["MATH211", "MATH214"]],
+  MATH311: ["Mathematical Methods", 3, ["MATH212"]],
+  MATH314: ["Mechanics", 3, ["MATH115"]],
+  MATH315: ["Complex Analysis", 3, ["MATH112"]],
+  MATH316: ["Discrete Mathematics", 3, ["MATH111"]],
+  MATH317: ["Numerical Analysis I", 4, ["MATH114", "MATH211"]],
+  MATH318: ["Theory of Numbers", 3, ["MATH111"]],
+  MATH319: ["Operations Research", 3, []],
+  MATH411: ["Numerical Analysis II", 4, ["MATH212", "MATH317"]],
+  MATH412: ["Tensor Analysis", 3, ["MATH115"]],
+  MATH414: ["Differential Geometry", 3, ["MATH412"]],
+  MATH415: ["Fluid Mechanics", 3, ["MATH212"]],
+  MATH416: ["Industrial Mathematics", 3, ["STA204"]],
+  MATH499: ["Research Project", 3, []],
+  STA104: ["Elements of Statistics & Probability", 3, []],
+  STA204: ["Advanced Statistics", 3, ["STA104"]],
+
+  // ---- MATH: major elective pool (15 credits) ----
+  MATH320: ["Optimization Technique", 4, ["MATH317"]],
+  MATH420: ["Fuzzy Mathematics", 3, []],
+  MATH422: ["Theory of Lattices", 3, []],
+  MATH426: ["Stochastic Calculus", 3, []],
+  MATH428: ["Theory of Groups", 3, []],
+  MATH430: ["Theory of Rings and Modules", 3, []],
+  MATH432: ["Functional Analysis", 3, ["MATH214"]],
+  MATH434: ["Discrete Mathematics and Graph Theory", 3, []],
+  MATH454: ["Classical Mechanics", 3, []],
+  MATH456: ["Quantum Mechanics", 3, []],
+  MATH458: ["Plasma Physics", 3, []],
+  MATH460: ["General Theory of Relativity", 3, []],
+  MATH464: ["Mathematical Modeling in Biology", 3, []],
+  MATH470: ["Mathematical Modeling in Finance and Business", 3, []],
+  MATH478: ["Machine Learning", 3, []],
+  MATH480: ["Econometrics", 3, []],
+  MATH482: ["Asymptotic Analysis & Perturbation Methods", 3, []],
+  MATH484: ["Risk Management & Actuarial Science", 3, []],
+  MATH486: ["Fluid Mechanics II", 3, []],
+  MATH488: ["Computational Linear Algebra and Functions Approximations", 3, []],
+  MATH490: ["Computer Aided Geometrical Design", 3, []],
+  STA391: ["Machine Learning", 3, []],
+
+  // ---- MATH: shared general-education elective pools (BESL/CHK/QSEK and OGED) ----
+  BIO100: ["Introductory Biology", 3, []],
+  CHE100: ["Introductory Chemistry", 3, []],
+  PHY100: ["Introductory Physics", 3, []],
+  SOC101: ["Introduction to Sociology", 3, []],
+  BUS101: ["Introduction to Business", 3, []],
+  EDC101: ["Introduction to Entrepreneurship", 3, []],
+  GEN206: ["Introduction to Sociology", 3, []],
+  ECO102: ["Introduction to Macroeconomics", 3, ["ENG102"]],
+  MGT101: ["Principles of Management", 3, []],
+  PHY112: ["Physics I", 4, []],
+  MATH117: ["Programming Language I", 4, []],
+  MATH216: ["Data Structures and Algorithms", 4, ["MATH117"]],
+  MATH312: ["Programming Language II", 4, ["MATH117"]],
+  OGEC001: ["Optional General Education Course 1", 3, ["ENG102"]],
+  OGEC002: ["Optional General Education Course 2", 3, ["ENG102"]],
+  OBE001: ["Optional Business & Economics Course 1", 3, ["ENG102"]],
+  OBE002: ["Optional Business & Economics Course 2", 3, ["ENG102"]],
+  ECM001: ["Elective Course 1", 3, []],
+  ECM002: ["Elective Course 2", 3, []],
+  ECM003: ["Elective Course 3", 3, []],
+  ECM004: ["Elective Course 4", 3, []]
 };
 
 const GENERAL_ED_POOL = ["ACT101", "BUS231", "BUS321", "ECO101", "FIN101", "GEN201", "GEN202", "GEN203", "GEN204", "GEN205", "GEN207", "GEN208", "GEN209", "GEN210", "GEN211", "GEN212", "GEN213", "GEN214", "GEN215", "GEN216", "GEN217", "GEN218", "GEN220", "GEN221", "GEN223", "GEN224", "GEN239", "JPN7101", "MGT321", "MGT337", "MKT101", "POP201", "POP202", "POP203", "SOC211", "SOC217", "SOC317"];
 
-/* EEE's OGEC (Optional General Education Credits) pool, confirmed directly against
-   the EEE curriculum export — it's the GEN/POP/JPN codes only (25 courses), NOT the
-   full GENERAL_ED_POOL above. The extra codes in GENERAL_ED_POOL (ACT101, BUS231,
-   BUS321, ECO101, FIN101, GEN239, MGT321, MGT337, MKT101, SOC211, SOC217, SOC317)
-   are CSE-pool-only / EEE Non-Engineering-pool courses and are NOT part of EEE's
-   OGEC list, so they're excluded here. */
 const EEE_OGEC_POOL = ["GEN201", "GEN202", "GEN203", "GEN204", "GEN205", "GEN207", "GEN208", "GEN209", "GEN210", "GEN211", "GEN212", "GEN213", "GEN214", "GEN215", "GEN216", "GEN217", "GEN218", "GEN220", "GEN221", "GEN223", "GEN224", "JPN7101", "POP201", "POP202", "POP203"];
 
-/* EEE's ONEC (Non-Engineering elective) pool — 3 credits, confirmed from the
-   EEE curriculum export. */
 const EEE_NONENG_POOL = ["ECO101", "ECO7101", "MIS101", "MKT101"];
 
-/* EEE's ELECT (major elective) pool — 20 credits total across the ELTV-I..VI
-   slots, confirmed from the EEE curriculum export. Includes two CSE courses
-   that the export explicitly lists as eligible EEE electives. */
 const EEE_ELECTIVE_POOL = ["CSE436", "CSE450", "EEE413", "EEE414", "EEE415", "EEE416", "EEE417", "EEE418", "EEE419", "EEE421", "EEE422", "EEE423", "EEE425", "EEE426", "EEE433", "EEE434", "EEE435", "EEE436", "EEE441", "EEE442", "EEE444", "EEE445", "EEE446", "EEE447", "EEE450", "EEE490"];
+
+const MATH_GENED_POOL = ["BUS101", "EDC101", "GEN206", "BIO100", "CHE100", "GEN203", "PHY100", "SOC101"];
+
+const MATH_OGED_POOL = ["GEN201", "GEN202", "GEN204", "GEN226", "ACT101", "ECO101", "ECO102", "FIN101", "GEN205", "GEN206", "GEN207", "GEN208", "GEN210", "GEN211", "GEN213", "GEN215", "GEN216", "GEN217", "GEN239", "JPN7101", "MGT101", "MKT101"];
+
+const MATH_ELECTIVE_POOL = ["CS391", "MATH320", "MATH420", "MATH422", "MATH426", "MATH428", "MATH430", "MATH432", "MATH434", "MATH454", "MATH456", "MATH458", "MATH460", "MATH464", "MATH470", "MATH478", "MATH480", "MATH482", "MATH484", "MATH486", "MATH488", "MATH490", "STA391"];
+
+const MATH_OGEC_POOL = ["GEN202", "GEN203", "GEN204", "GEN205", "GEN206", "GEN207", "GEN208", "GEN210", "GEN211", "GEN239", "GEN2XX"];
+
+const MATH_ECM_POOL = ["MAT421", "MAT422", "MAT424", "MAT425", "MAT431", "MAT432", "MAT433", "MAT434", "MAT451", "MAT452", "MAT453", "MAT454", "MAT461", "MAT462", "MAT471", "MAT472"];
+
+const MATH_OBE_POOL = ["BUS101", "ACT101", "ECO101", "ECO102", "FIN101", "MGT101", "MKT101"];
+
+const MATH_ADVICE = {
+  MATH499: "The course catalog lists MATH499 (Research Project) as requiring at least 95 completed credits."
+};
 
 const CSE_MAJOR_TRACKS = {
   comm: ["CSE350", "CSE432", "CSE452", "CSE453", "CSE457", "CSE489"],
@@ -246,6 +330,34 @@ const EEE_YEARS = [
   }
 ];
 
+
+const MATH_YEARS = [
+  {
+    name: "1st Year", total: 32, semesters: [
+      { name: "Semester 1", courses: ["ENG101", "MATH111", "MATH112", "MATH115", "PHY112"] },
+      { name: "Semester 2", courses: ["ENG102", "MATH114", "MATH116", "MATH117", "STA104"] }
+    ]
+  },
+  {
+    name: "2nd Year", total: 32, semesters: [
+      { name: "Semester 1", courses: ["GEN201", "MATH211", "MATH212", "PHY212", slot("OGEC001", 3, "Optional Elective (General Ed.)", "Choose one course from the Math OGEC pool. Prerequisite: ENG102", "open", MATH_OGEC_POOL)] },
+      { name: "Semester 2", courses: ["MATH214", "STA204", slot("OGEC002", 3, "Optional Elective (General Ed.)", "Choose one course from the Math OGEC pool. Prerequisite: ENG102", "open", MATH_OGEC_POOL), "MATH215", "MATH216"] }
+    ]
+  },
+  {
+    name: "3rd Year", total: 32, semesters: [
+      { name: "Semester 1", courses: [slot("OBE001", 3, "Optional Business & Economics Course", "Choose one course from the Math OBE pool. Prerequisite: ENG102", "open", MATH_OBE_POOL) ,"MATH311", "MATH312", "MATH314", "MATH315"] },
+      { name: "Semester 2", courses: [slot("ECM001", 3, "Elective Modules", "Choose one course from the Math ECM pool. Prerequisite: NONE", "open", MATH_ECM_POOL) ,"MATH316", "MATH317", "MATH318", "MATH319"] }
+    ]
+  },
+  {
+    name: "4th Year", total: 34, semesters: [
+      { name: "Semester 1", courses: ["MATH411", "MATH412", slot("OBE002", 3, "Optional Business & Economics Course", "Choose one course from the Math OBE pool. Prerequisite: ENG102", "open", MATH_OBE_POOL) ,"MATH415", "MATH499"] },
+      { name: "Semester 2", courses: ["MATH414", "MATH416", slot("ECM001", 3, "Elective Modules", "Choose one course from the Math ECM pool. Prerequisite: NONE", "open", MATH_ECM_POOL), slot("ECM003", 3, "Elective Modules", "Choose one course from the Math ECM pool. Prerequisite: NONE", "open", MATH_ECM_POOL), slot("ECM004", 3, "Elective Modules", "Choose one course from the Math ECM pool. Prerequisite: NONE", "open", MATH_ECM_POOL)] }
+    ]
+  }
+];
+
 /* ===== Programs ===== */
 const PROGRAMS = {
   cse: {
@@ -259,7 +371,7 @@ const PROGRAMS = {
       { label: "Core CSE", value: "62 cr" },
       { label: "Major", value: "20 cr" },
       { label: "Non-major electives", value: "8 cr" },
-      { label: "Capstone", value: "6 cr" }
+      { label: "Capstone Project", value: "6 cr" }
     ],
     generalEd: GENERAL_ED_POOL,
     majorTracks: CSE_MAJOR_TRACKS,
@@ -275,14 +387,32 @@ const PROGRAMS = {
     catalogLabel: "According to Summer-2018 curriculum · 140 credits · 4 years · 12 semesters",
     totalCredits: 140,
     summary: [
-      { label: "Foundation", value: "21 cr" },
+      { label: "Foundation", value: "12 cr" },
       { label: "Core EEE", value: "93 cr" },
       { label: "Non-major electives", value: "20 cr" },
-      { label: "Design Project", value: "6 cr" }
+      { label: "Optionals and Non-Engineering", value: "9 cr" },
+      { label: "Capstone Project", value: "6 cr" }
     ],
     generalEd: GENERAL_ED_POOL,
     viewType: "roadmap",
     years: EEE_YEARS,
+  },
+  math: {
+    key: "math",
+    label: "MATH",
+    fullName: "B.Sc. (Hons.) in Mathematics",
+    catalogLabel: "According to Summer-2025 curriculum · 130 credits · 4 years · 8 semesters",
+    totalCredits: 130,
+    summary: [
+      { label: "English foundation", value: "6 cr" },
+      { label: "Core Math", value: "85 cr" },
+      { label: "General Education Electives", value: "24 cr" },
+      { label: "Major Electives", value: "15 cr" }
+    ],
+    generalEd: MATH_OGED_POOL,
+    advice: MATH_ADVICE,
+    viewType: "roadmap",
+    years: MATH_YEARS,
   }
 };
 

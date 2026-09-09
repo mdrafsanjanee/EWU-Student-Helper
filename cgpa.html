@@ -9,10 +9,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
     <link href="assets/css/creative-theme.css" rel="stylesheet">
+    <link href="assets/css/app-theme.css" rel="stylesheet">
+    <link href="assets/css/cgpa.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
 </head>
 
-<body class="creative-theme" style="padding-top: 56px;">
+<body class="creative-theme">
     <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
         <div class="container"><a class="navbar-brand" href="index.html">EWU STUDENT HELPER</a><button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" type="button" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-align-justify"></i></button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
@@ -20,20 +22,75 @@
                     <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="planner.html">Course Planner</a></li>
                     <li class="nav-item"><a class="nav-link" href="routine.html">Routine Generator</a></li>
-                    <li class="nav-item"><a class="nav-link" href="cgpa.html">CGPA Calculator</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="cgpa.html">CGPA Calculator</a></li>
                     <li class="nav-item"><a class="nav-link" href="curriculum.html">Curriculum</a></li>
                 </ul>
             </div>
         </div>
     </nav>
-    <main class="container py-5">
-        <section class="landing-card compact">
-            <div class="eyebrow">CGPA CALCULATOR</div>
-            <h2>Coming next</h2>
-            <p class="text-secondary mb-0">This page is reserved for the CGPA calculator.</p>
-        </section>
+    <main class="container-fluid px-3 px-lg-4 py-4">
+        <header class="planner-toolbar">
+            <div>
+                <div class="eyebrow">CGPA CALCULATOR</div>
+                <h1>Calculate your SGPA &amp; CGPA</h1>
+                <p class="text-secondary mb-0">Pick your program, search for the courses you took this semester, and
+                    grade each one. Add your previous CGPA and completed credits below for an accurate cumulative
+                    result.</p>
+            </div>
+            <div class="planner-toolbar-right cgpa-toolbar-right">
+                <div class="cgpa-field">
+                    <div class="small-label">Program</div>
+                    <select id="programSelect" class="form-select"></select>
+                </div>
+                <div class="cgpa-field-row">
+                    <div class="cgpa-field">
+                        <div class="small-label">Previous CGPA</div>
+                        <input id="prevCgpa" class="form-control" type="number" min="0" max="4" step="0.01"
+                            placeholder="0.00">
+                    </div>
+                    <div class="cgpa-field">
+                        <div class="small-label">Credits earned</div>
+                        <input id="prevCredits" class="form-control" type="number" min="0" step="0.5"
+                            placeholder="0">
+                    </div>
+                </div>
+            </div>
+        </header>
+        <section id="cgpaSummary" class="summary-grid mb-4"></section>
+        <div class="planner-layout">
+            <section class="panel planner-courses">
+                <div class="panel-head">
+                    <div>
+                        <h2>Courses</h2>
+                        <p>Showing <span id="courseListProgramLabel">CSE</span> courses from the curriculum. Search by
+                            code or name and add up to 6 for the semester.</p>
+                    </div>
+                </div>
+                <div class="planner-search-row" style="grid-template-columns:1fr;">
+                    <input id="courseSearch" class="form-control form-control-lg" type="search"
+                        placeholder="Search course code or name…">
+                </div>
+                <div id="courseList" class="course-list"></div>
+            </section>
+            <aside class="panel selected-panel">
+                <div class="selected-top">
+                    <div>
+                        <div class="small-label">This semester</div>
+                        <div class="selection-counter" id="selectionCounter">0 / 6 courses · 0 credits</div>
+                    </div>
+                </div>
+                <div id="selectedList" class="selected-list"></div>
+                <div id="selectedEmpty" class="selected-empty">
+                    <div class="placeholder-icon">＋</div><strong>No courses selected</strong><span>Add courses from
+                        the list and set a grade for each.</span>
+                </div>
+            </aside>
+        </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/curriculum-data.js"></script>
+    <script src="assets/js/cgpa.js"></script>
     <script src="assets/js/creative.js"></script>
     <footer class="page-footer">Copyright (c) 2026 MD. RAFSAN JANEE</footer>
 </body>

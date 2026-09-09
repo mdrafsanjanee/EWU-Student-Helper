@@ -123,6 +123,57 @@ const COURSES = {
   ECO7101: ["Principles of Microeconomics", 3, []],
   MIS101: ["Introduction to Management Information System", 3, []],
 
+  // ---- DSA (B.Sc. in Data Science and Analytics) core sequence ----
+  // Titles, credits and prerequisites confirmed from the DSA curriculum PDF's
+  // Course Description and Advising Criteria sections (Fall-2024 version).
+  STA191: ["Probability & Statistics", 3, []],
+  STA293: ["Probability Distributions", 3, ["STA191"]],
+  STA395: ["Statistical Inference", 3, ["STA293"]],
+  MAT291: ["Linear Algebra", 3, ["MAT102"]],
+  MAT295: ["Discrete Mathematics", 3, ["STA191"]],
+  MAT397: ["Numerical Methods & Optimization", 4, ["MAT291"]],
+  CS191: ["Programming with C", 4, []],
+  CS295: ["Programming with Python", 4, ["CS191"]],
+  CS397: ["Data Structure & Algorithm", 4, ["CS295"]],
+  CS399: ["Artificial Intelligence", 4, ["CS295"]],
+  DSA101: ["Introduction to Data Science", 4, ["STA191"]],
+  DSA201: ["Data Processing & Storage", 4, ["CS191"]],
+  DSA303: ["Regression Analysis", 3, ["STA293"]],
+  DSA305: ["Multivariate Analysis", 3, ["STA395"]],
+  DSA307: ["Generalized Linear Model", 3, ["STA395"]],
+  DSA401: ["Data Mining", 4, ["CS295"]],
+  DSA403: ["Machine Learning", 4, ["CS397"]],
+  DSA405: ["Big Data & Cloud Computing", 4, ["DSA403"]],
+  DSA407: ["Data Security & Privacy", 3, ["DSA401"]],
+  DSA499A: ["Data Science Project Part I", 1, ["DSA403"]],
+  DSA499B: ["Data Science Project Part II", 2, ["DSA499A"]],
+  DSA499C: ["Data Science Project Part III", 3, ["DSA499B"]],
+
+  // ---- DSA: Elective Group A (Statistics-leaning, 9 of 18 elective credits) ----
+  STA430: ["Stochastic Processes", 3, ["DSA405"]],
+  STA432: ["Bayesian Statistics", 3, ["DSA405"]],
+  STA434: ["Time Series Analysis", 3, ["DSA405"]],
+  STA436: ["Experimental Design", 3, ["DSA405"]],
+  STA438: ["Biostatistics", 3, ["DSA405"]],
+  STA440: ["Information Systems", 3, ["DSA405"]],
+  ECO465: ["Basic Econometrics", 3, ["DSA405"]],
+
+  // ---- DSA: Elective Group B (Computing/Business-leaning, 9 of 18 elective credits) ----
+  CS410: ["Deep Learning", 3, ["DSA405"]],
+  CS412: ["Data Visualization", 3, ["DSA405"]],
+  CS414: ["Cryptography & Blockchain", 3, ["DSA405"]],
+  CS416: ["Bioinformatics", 3, ["DSA405"]],
+  CS418: ["Machine Learning for Health Sciences", 3, ["DSA405"]],
+  CS420: ["Machine Learning for Cyber Security", 3, ["DSA405"]],
+  BUS420: ["Business Intelligence", 3, ["DSA405"]],
+  FIN7430: ["Foundation of Financial Technology", 3, ["DSA405"]],
+  FIN7431: ["System Analysis & Design", 3, ["DSA405"]],
+
+  // ---- DSA: extra GED pool courses not already covered by the shared pools above ----
+  GEB101: ["Basic Biology", 3, []],
+  SOC212: ["Social Ecology, Environment and Society", 3, []],
+  PPHS102: ["Introduction to Public Health Sciences", 3, []],
+
   // ---- MATH (B.Sc. Hons in Mathematics) core sequence ----
 
   CS116: ["Programming Language I", 4, []],
@@ -233,6 +284,13 @@ const EEE_OGEC_POOL = ["GEN201", "GEN202", "GEN203", "GEN204", "GEN205", "GEN207
 const EEE_NONENG_POOL = ["ECO101", "ECO7101", "MIS101", "MKT101"];
 
 const EEE_ELECTIVE_POOL = ["CSE436", "CSE450", "EEE413", "EEE414", "EEE415", "EEE416", "EEE417", "EEE418", "EEE419", "EEE421", "EEE422", "EEE423", "EEE425", "EEE426", "EEE433", "EEE434", "EEE435", "EEE436", "EEE441", "EEE442", "EEE444", "EEE445", "EEE446", "EEE447", "EEE450", "EEE490"];
+
+// ---- DSA elective / GED pools — from the DSA curriculum PDF's "Program Structure" and "Legends" sections ----
+const DSA_BES_POOL = ["BUS101", "EDC101", "GEN206"]; // Part (ii): Business/Entrepreneurship/Social Sciences (choose 1 -> BES001)
+const DSA_QSE_POOL = ["PHY100", "GEB101", "GEN203", "SOC212"]; // Part (iv): Quantitative/Science/Environment (choose 2 -> QSE001-002)
+const DSA_OPEN_GED_POOL = ["PPHS102", "GEN205", "GEN206", "GEN207", "GEN208", "GEN210", "GEN211", "GEN239", "ACT101", "ECO101", "ECO102", "FIN101", "MGT101", "MKT101"]; // Part (f): Open GED (choose 4 -> OPT001-004)
+const DSA_ELECTIVE_GROUP_A = ["STA430", "STA432", "STA434", "STA436", "STA438", "STA440", "ECO465"]; // choose 3 -> ELV001-003
+const DSA_ELECTIVE_GROUP_B = ["CS412", "CS414", "CS416", "CS418", "CS420", "BUS420", "FIN7430", "FIN7431"]; // choose 3 -> ELV004-006
 
 const MATH_GENED_POOL = ["BUS101", "EDC101", "GEN206", "BIO100", "CHE100", "GEN203", "PHY100", "SOC101"];
 
@@ -354,6 +412,38 @@ const EEE_YEARS = [
 ];
 
 
+const DSA_YEARS = [
+  {
+    name: "1st Year", total: 35, semesters: [
+      { name: "Semester 1", total: 12, courses: ["ENG101", "MAT101", "STA191", slot("BES001", 3, "GED Elective (Business/Social Sciences)", "Choose one course from the DSA Business/Entrepreneurship/Social Sciences pool", "open", DSA_BES_POOL)] },
+      { name: "Semester 2", total: 10, courses: ["ENG102", "MAT102", "CS191"] },
+      { name: "Semester 3", total: 13, courses: ["DSA101", slot("QSE001", 3, "GED Elective (Quantitative/Science)", "Choose one course from the DSA Quantitative/Science/Environment pool", "open", DSA_QSE_POOL), slot("QSE002", 3, "GED Elective (Quantitative/Science)", "Choose a second course from the DSA Quantitative/Science/Environment pool", "open", DSA_QSE_POOL), slot("OPT001", 3, "Open GED Elective", "Choose one course from the DSA Open GED pool", "open", DSA_OPEN_GED_POOL)] }
+    ]
+  },
+  {
+    name: "2nd Year", total: 35, semesters: [
+      { name: "Semester 1", total: 13, courses: ["MAT291", "CS295", "STA293", slot("OPT002", 3, "Open GED Elective", "Choose one course from the DSA Open GED pool", "open", DSA_OPEN_GED_POOL)] },
+      { name: "Semester 2", total: 10, courses: ["STA395", "CS397", slot("OPT003", 3, "Open GED Elective", "Choose one course from the DSA Open GED pool", "open", DSA_OPEN_GED_POOL)] },
+      { name: "Semester 3", total: 12, courses: ["MAT295", "DSA303", slot("OPT004", 3, "Open GED Elective", "Choose one course from the DSA Open GED pool", "open", DSA_OPEN_GED_POOL), "GEN226"] }
+    ]
+  },
+  {
+    name: "3rd Year", total: 33, semesters: [
+      { name: "Semester 1", total: 11, courses: ["MAT397", "DSA201", "DSA305"] },
+      { name: "Semester 2", total: 11, courses: ["DSA307", "DSA401", "DSA403"] },
+      { name: "Semester 3", total: 11, courses: ["CS399", "DSA405", "DSA407"] }
+    ]
+  },
+  {
+    name: "4th Year", total: 27, semesters: [
+      { name: "Semester 1", total: 10, courses: ["CS410", slot("ELV001", 3, "Elective (Module 1 )", "Choose one course from DSA Elective Group A — statistics/econometrics", "open", DSA_ELECTIVE_GROUP_A), slot("ELV002", 3, "Elective (Module 1)", "Choose another course from DSA Elective Group A — statistics/econometrics", "open", DSA_ELECTIVE_GROUP_A), "DSA499A"] },
+      { name: "Semester 2", total: 11, courses: [slot("ELV003", 3, "Elective (Module 1)", "Choose the third course from DSA Elective Group A — statistics/econometrics", "open", DSA_ELECTIVE_GROUP_A), slot("ELV004", 3, "Elective (Module 2)", "Choose one course from DSA Elective Group B — computing/business", "open", DSA_ELECTIVE_GROUP_B), slot("ELV005", 3, "Elective (Module 2)", "Choose another course from DSA Elective Group B — computing/business", "open", DSA_ELECTIVE_GROUP_B), "DSA499B"] },
+      { name: "Semester 3", total: 6, courses: [slot("ELV006", 3, "Elective (Module 2)", "Choose the third course from DSA Elective Group B — computing/business", "open", DSA_ELECTIVE_GROUP_B), "DSA499C"] }
+    ]
+  }
+];
+
+
 const MATH_YEARS = [
   {
     name: "1st Year", total: 32, semesters: [
@@ -376,7 +466,7 @@ const MATH_YEARS = [
   {
     name: "4th Year", total: 34, semesters: [
       { name: "Semester 1", courses: ["MATH411", "MATH412", slot("OBE002", 3, "Optional Business & Economics Course", "Choose one course from the Math OBE pool. Prerequisite: ENG102", "open", MATH_OBE_POOL) ,"MATH415", "MATH499"] },
-      { name: "Semester 2", courses: ["MATH414", "MATH416", slot("ECM001", 3, "Elective Modules", "Choose one course from the Math ECM pool. Prerequisite: NONE", "open", MATH_ECM_POOL), slot("ECM003", 3, "Elective Modules", "Choose one course from the Math ECM pool. Prerequisite: NONE", "open", MATH_ECM_POOL), slot("ECM004", 3, "Elective Modules", "Choose one course from the Math ECM pool. Prerequisite: NONE", "open", MATH_ECM_POOL)] }
+      { name: "Semester 2", courses: ["MATH414", "MATH416", slot("ECM002", 3, "Elective Modules", "Choose one course from the Math ECM pool. Prerequisite: NONE", "open", MATH_ECM_POOL), slot("ECM003", 3, "Elective Modules", "Choose one course from the Math ECM pool. Prerequisite: NONE", "open", MATH_ECM_POOL), slot("ECM004", 3, "Elective Modules", "Choose one course from the Math ECM pool. Prerequisite: NONE", "open", MATH_ECM_POOL)] }
     ]
   }
 ];
@@ -407,7 +497,7 @@ const PROGRAMS = {
     key: "eee",
     label: "EEE",
     fullName: "B.Sc. in Electrical &amp; Electronic Engineering",
-    catalogLabel: "According to Summer-2018 curriculum · 140 credits · 4 years · 12 semesters",
+    catalogLabel: "According to Spring-2022 curriculum · 140 credits · 4 years · 12 semesters",
     totalCredits: 140,
     summary: [
       { label: "Foundation", value: "12 cr" },
@@ -419,6 +509,22 @@ const PROGRAMS = {
     generalEd: GENERAL_ED_POOL,
     viewType: "roadmap",
     years: EEE_YEARS,
+  },
+  dsa: {
+    key: "dsa",
+    label: "DSA",
+    fullName: "B.Sc. in Data Science &amp; Analytics",
+    catalogLabel: "According to Fall-2024 curriculum · 130 credits · 4 years · 12 semesters",
+    totalCredits: 130,
+    summary: [
+      { label: "English Communication", value: "6 cr" },
+      { label: "General Electives", value: "27 cr" },
+      { label: "Core Data Science", value: "79 cr" },
+      { label: "Electives (Group A & B)", value: "18 cr" }
+    ],
+    generalEd: DSA_OPEN_GED_POOL,
+    viewType: "roadmap",
+    years: DSA_YEARS,
   },
   math: {
     key: "math",
@@ -436,6 +542,7 @@ const PROGRAMS = {
     advice: MATH_ADVICE,
     viewType: "roadmap",
     years: MATH_YEARS,
+    note: "This is according to the old 128cr flawchart from EWU and will be updated once the updated curriculum flowchart is uploaded"
   }
 };
 

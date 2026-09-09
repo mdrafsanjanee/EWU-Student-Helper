@@ -1,0 +1,335 @@
+/* ============================================================
+   App Theme — Course Planner & Routine Generator
+   Re-skins the tool pages to match the flat, bordered, orange-
+   accented "creative" system already established by the
+   homepage (creative-theme.css) and the Curriculum page
+   (curriculum.css): Open Sans for labels/headings, Merriweather
+   for body copy, #f05f40 accent, sharp/flat cards with thin
+   borders instead of heavy rounded corners + blue gradients.
+   Loads after style.css / creative-theme.css so it wins the
+   cascade on shared class names.
+   ============================================================ */
+
+body.creative-theme {
+  background: #f7f7f7;
+  padding-top: 86px;
+}
+
+/* ---------- Page chrome: hero / toolbar / panels / stat cards ---------- */
+
+body.creative-theme .hero,
+body.creative-theme .planner-toolbar,
+body.creative-theme .panel,
+body.creative-theme .stat,
+body.creative-theme .summary-empty {
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 0;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, .04);
+}
+
+body.creative-theme .hero,
+body.creative-theme .planner-toolbar {
+  padding: 1.75rem 2rem;
+}
+
+body.creative-theme .hero h1,
+body.creative-theme .planner-toolbar h1 {
+  font: 800 clamp(1.6rem, 3vw, 2.35rem)/1.2 "Open Sans", Arial, sans-serif;
+  letter-spacing: -.01em;
+  color: #212529;
+}
+
+body.creative-theme .hero p,
+body.creative-theme .planner-toolbar p,
+body.creative-theme .panel-head p {
+  font-family: Merriweather, Georgia, serif;
+  color: #6c757d;
+}
+
+body.creative-theme .eyebrow {
+  font: 700 .72rem/1 "Open Sans", Arial, sans-serif;
+  letter-spacing: .16em;
+  color: #f05f40;
+}
+
+body.creative-theme .small-label {
+  color: #777;
+  font: 700 .68rem "Open Sans", Arial, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+}
+
+body.creative-theme .panel-head h2 {
+  font: 800 1.15rem "Open Sans", Arial, sans-serif;
+  color: #212529;
+}
+
+body.creative-theme .summary-empty strong,
+body.creative-theme .selected-empty strong,
+body.creative-theme .list-empty strong,
+body.creative-theme .routine-placeholder h3 {
+  font-family: "Open Sans", Arial, sans-serif;
+}
+
+/* stat cards */
+body.creative-theme .stat .label {
+  color: #777;
+  font: 700 .7rem "Open Sans", Arial, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+body.creative-theme .stat .value {
+  font: 800 1.4rem "Open Sans", Arial, sans-serif;
+  color: #212529;
+}
+
+body.creative-theme .stat .detail {
+  color: #999;
+  font-family: "Open Sans", Arial, sans-serif;
+}
+
+/* ---------- Recommended-course chips ---------- */
+
+body.creative-theme .course-chip {
+  background: #fff5f2;
+  border: 1px solid #f3d9c8;
+  color: #f05f40;
+  font-family: "Open Sans", Arial, sans-serif;
+}
+
+body.creative-theme .course-chip:hover {
+  background: #ffe9e1;
+  border-color: #f05f40;
+}
+
+/* ---------- Course list: dept / course / section rows ---------- */
+/* mirrors .semester / .semester-head / .course-node in curriculum.css */
+
+body.creative-theme .dept-block {
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, .035);
+}
+
+body.creative-theme .dept-head {
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+}
+
+body.creative-theme .dept-head strong {
+  font: 800 .82rem "Open Sans", Arial, sans-serif;
+  color: #212529;
+}
+
+body.creative-theme .dept-head > span {
+  font-family: "Open Sans", Arial, sans-serif;
+  color: #999;
+}
+
+body.creative-theme .dept-kicker {
+  color: #f05f40;
+  font-family: "Open Sans", Arial, sans-serif;
+}
+
+body.creative-theme .course-block {
+  border-bottom: 1px solid #eee;
+}
+
+body.creative-theme .course-code-head {
+  font: 800 .95rem "Open Sans", Arial, sans-serif;
+  color: #212529;
+}
+
+body.creative-theme .course-name {
+  font-family: Merriweather, Georgia, serif;
+  color: #888;
+}
+
+body.creative-theme .course-head > span {
+  font-family: "Open Sans", Arial, sans-serif;
+  color: #999;
+}
+
+body.creative-theme .section-row {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  border-left: 3px solid transparent;
+  transition: .15s;
+}
+
+body.creative-theme .section-row:hover:not(:disabled) {
+  background: #fffaf8;
+}
+
+body.creative-theme .section-row.selected {
+  background: #fff5f2;
+  border-left-color: #f05f40;
+}
+
+body.creative-theme .section-info > strong {
+  font: 800 .81rem "Open Sans", Arial, sans-serif;
+  color: #212529;
+}
+
+body.creative-theme .section-facts {
+  font-family: "Open Sans", Arial, sans-serif;
+  color: #888;
+}
+
+body.creative-theme .section-action {
+  font-family: "Open Sans", Arial, sans-serif;
+  color: #f05f40;
+}
+
+/* ---------- Selected-courses panel ---------- */
+
+body.creative-theme .selected-panel {
+  top: 96px;
+}
+
+body.creative-theme .selected-card {
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-left: 3px solid #f05f40;
+  border-radius: 0;
+}
+
+body.creative-theme .selected-head strong {
+  font: 800 .92rem "Open Sans", Arial, sans-serif;
+  color: #212529;
+}
+
+body.creative-theme .selected-head span,
+body.creative-theme .selected-meta,
+body.creative-theme .selected-meetings {
+  font-family: "Open Sans", Arial, sans-serif;
+  color: #888;
+}
+
+body.creative-theme .selected-empty {
+  border: 1px dashed #f05f40;
+  background: #fffaf8;
+  border-radius: 0;
+}
+
+body.creative-theme .planner-alert {
+  background: #fff5f2;
+  border: 1px solid #f3d9c8;
+  color: #b3462b;
+  border-radius: 0;
+  font-family: "Open Sans", Arial, sans-serif;
+}
+
+body.creative-theme .imported-summary {
+  font-family: "Open Sans", Arial, sans-serif;
+  color: #888;
+}
+
+body.creative-theme .imported-pill {
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #555;
+}
+
+body.creative-theme .imported-pill:hover {
+  border-color: #f05f40;
+}
+
+body.creative-theme .icon-btn:hover {
+  color: #f05f40;
+}
+
+/* ---------- Routine grid ---------- */
+
+body.creative-theme .day-col {
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, .035);
+}
+
+body.creative-theme .day-head {
+  background: #f05f40;
+}
+
+body.creative-theme .day-name {
+  font: 800 1rem "Open Sans", Arial, sans-serif;
+}
+
+body.creative-theme .day-meta {
+  font-family: "Open Sans", Arial, sans-serif;
+}
+
+body.creative-theme .class-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-left: 3px solid #f05f40;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.creative-theme .class-card.is-lab {
+  border-left-color: #b35d1d;
+}
+
+body.creative-theme .course-code {
+  font: 800 .95rem "Open Sans", Arial, sans-serif;
+  color: #212529;
+}
+
+body.creative-theme .is-lab .course-code {
+  color: #a8550a;
+}
+
+body.creative-theme .card-line {
+  font-family: "Open Sans", Arial, sans-serif;
+  color: #777;
+}
+
+body.creative-theme .card-time {
+  color: #f05f40;
+}
+
+body.creative-theme .gap-row {
+  font-family: "Open Sans", Arial, sans-serif;
+  color: #999;
+}
+
+body.creative-theme .gap-row strong {
+  color: #555;
+}
+
+body.creative-theme .gap-line {
+  background: #e4e4e4;
+}
+
+body.creative-theme .empty,
+body.creative-theme .routine-placeholder p {
+  font-family: Merriweather, Georgia, serif;
+  color: #888;
+}
+
+body.creative-theme .routine-placeholder h3 {
+  font: 800 1.05rem "Open Sans", Arial, sans-serif;
+  color: #212529;
+}
+
+body.creative-theme .badge.text-bg-light {
+  background: #fff5f2 !important;
+  color: #f05f40 !important;
+  border-color: #f3d9c8 !important;
+  font-family: "Open Sans", Arial, sans-serif;
+}
+
+body.creative-theme .page-footer {
+  background: #fff;
+}
+
+@media (max-width: 600px) {
+  body.creative-theme {
+    padding-top: 70px;
+  }
+}

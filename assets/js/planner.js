@@ -26,9 +26,7 @@ const DEPARTMENTS = [
 const knownDept = new Map(DEPARTMENTS);
 
 function getPlannerData() {
-  // planner-data.js declares PLANNER_DATA as a global lexical binding, which is
-  // not exposed as window.PLANNER_DATA. Support both forms so recommendations
-  // and course metadata work reliably in a plain GitHub Pages setup.
+
   if (typeof PLANNER_DATA !== "undefined") return PLANNER_DATA;
   return window.PLANNER_DATA || {};
 }
@@ -73,8 +71,7 @@ function parseOfferedPage(items) {
   const words = items.filter(i => String(i.str || "").trim()).map(i => ({
     text: String(i.str).trim(), x: Number(i.transform?.[4] || 0), y: Number(i.transform?.[5] || 0)
   }));
-  // EWU's printed table uses fixed x-columns. We intentionally parse the timing
-  // column as its own stream because the end time wraps onto a second line.
+
   const courseWords = words.filter(w => w.x < 90);
   const sectionWords = words.filter(w => w.x >= 88 && w.x < 130);
   const timingWords = words.filter(w => w.x >= 130 && w.x < 225);
@@ -197,9 +194,6 @@ function renderSection(s, selected) {
   return `<button type="button" class="section-row ${selectedHere ? "selected" : ""}" ${locked ? "disabled" : ""} data-add-section='${esc(payload)}'><div class="section-info"><strong>Section ${esc(s.section)}</strong><div class="section-facts"><span>Room: ${esc(roomText)}</span><span>Date: ${esc(dayText)}</span><span>Time: ${esc(timeText)}</span></div></div><span class="section-action">${selectedHere ? "Selected" : locked ? "Another section selected" : "Add"}</span></button>`;
 }
 function recommendedPlannerCode(code) {
-  // EWU's curriculum uses ENG101/ENG102, while current offered-course PDFs
-  // use ENG7101/ENG7102. Keep the curriculum data intact and show the
-  // currently offered planner codes here.
   const aliases = { ENG101: "ENG7101", ENG102: "ENG7102" };
   return aliases[code] || code;
 }

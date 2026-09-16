@@ -2,6 +2,25 @@
 
 A web-based student utility designed to make everyday academic tasks at **East West University (EWU)** easier and more organized.
 
+## 🌐 Live Website
+
+The project is hosted using **GitHub Pages**.
+
+> [Live Demo](https://mdrafsanjanee.github.io/EWU-Student-Helper/)
+
+## 📱 Android App
+
+EWU Student Helper is also available as an Android application.
+
+### Download
+
+**[Download the latest Android APK](../../releases/latest)**
+
+You can also find previous versions in the repository's [Releases](../../releases) section.
+
+> **Note:** Android may display a security warning when installing an APK downloaded outside Google Play. You may need to allow installation from your browser or file manager.
+
+
 ## ✨ Features
 
 ### 📚 Course Planner
@@ -56,12 +75,6 @@ git clone https://github.com/mdrafsanjanee/EWU-Student-Helper.git
 Open the project folder and launch `index.html` in your browser.
 
 For the best development experience, use **VS Code with Live Server**.
-
-## 🌐 Live Website
-
-The project is hosted using **GitHub Pages**.
-
-> [Live Demo](https://mdrafsanjanee.github.io/EWU-Student-Helper/)
 
 ## 📁 Project Structure
 

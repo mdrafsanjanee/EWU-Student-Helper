@@ -195,9 +195,6 @@ function renderSection(s, selected) {
   return `<button type="button" class="section-row ${selectedHere ? "selected" : ""}" ${locked ? "disabled" : ""} data-add-section='${esc(payload)}'><div class="section-info"><strong>Section ${esc(s.section)}</strong><div class="section-facts"><span>Room: ${esc(roomText)}</span><span>Date: ${esc(dayText)}</span><span>Time: ${esc(timeText)}</span></div></div><span class="section-action">${selectedHere ? "Selected" : locked ? "Another section selected" : "Add"}</span></button>`;
 }
 function recommendedPlannerCode(code) {
-  // EWU's curriculum uses ENG101/ENG102, while current offered-course PDFs
-  // use ENG7101/ENG7102. Keep the curriculum data intact and show the
-  // currently offered planner codes here.
   const aliases = { ENG101: "ENG7101", ENG102: "ENG7102" };
   return aliases[code] || code;
 }

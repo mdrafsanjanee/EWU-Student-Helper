@@ -123,6 +123,102 @@ const COURSES = {
   ECO7101: ["Principles of Microeconomics", 3, []],
   MIS101: ["Introduction to Management Information System", 3, []],
 
+  // ---- Civil Engineering (CE) courses ----
+  ENG7101: ["Basic English", 3, []],
+  ENG7102: ["Composition and Communication Skills", 3, ["ENG7101"]],
+  GEN7226: ["Emergence of Bangladesh", 3, ["ENG7102"]],
+  PHY7107: ["Engineering Physics", 4, []],
+  CHE7107: ["Engineering Chemistry", 4, []],
+  MAT7101: ["Differential and Integral Calculus", 3, []],
+  MAT7102: ["Differential Equations and Special Functions", 3, ["MAT7101"]],
+  MAT7104: ["Coordinate Geometry and Vector Analysis", 3, ["MAT7101"]],
+  STA7102: ["Statistics and Probability", 3, []],
+  CE7227: ["Numerical Methods and Computer Programming in Civil Engineering", 4, []],
+  EEE7165: ["Basic Electrical Technology", 3, []],
+
+  // ---- Civil: Open Humanities/Sociology elective pool (choose 2, 6 credits) ----
+  GEN7201: ["Bangladesh Studies", 3, ["ENG7102"]],
+  GEN7205: ["Introduction to Psychology", 3, ["ENG7102"]],
+  GEN7207: ["Industrial Psychology", 3, ["ENG7102"]],
+  GEN7239: ["Professional Ethics", 3, ["ENG7102"]],
+  SOC7101: ["Introduction to Sociology", 3, []],
+
+  // ---- Civil: Business, Entrepreneurship & Economics elective pool (choose 2, 6 credits) ----
+  ACT7101: ["Financial Accounting", 3, []],
+  MGT7101: ["Principles of Management", 3, ["ENG7101"]],
+  MKT7101: ["Principles of Marketing", 3, []],
+  EDC7101: ["Basic Entrepreneurship", 3, []],
+
+  // ---- Civil: Basic Civil Engineering (29 credits) ----
+  CE7100: ["Civil Engineering Drawing", 1, []],
+  CE7101: ["Analytic Mechanics", 3, []],
+  CE7102: ["Computer Aided Drafting", 1, []],
+  CE7103: ["Surveying and Introduction to GIS", 4, []],
+  CE7200: ["Details of Construction", 1, []],
+  CE7201: ["Engineering Materials", 4, []],
+  CE7203: ["Engineering Geology and Geomorphology", 3, []],
+  CE7208: ["Quantity Surveying and Cost Analysis", 1, []],
+  CE7211: ["Mechanics of Solids-I", 4, ["CE7101"]],
+  CE7213: ["Mechanics of Solids-II", 3, ["CE7211"]],
+  CE7261: ["Fluid Mechanics", 4, []],
+
+  // ---- Civil: Structural Engineering (18 credits) ----
+  CE7311: ["Structural Analysis-I", 3, ["CE7213"]],
+  CE7315: ["Design of Concrete Structures-I", 4, ["CE7311"]],
+  CE7417: ["Design of Concrete Structures-II", 2, ["CE7315"]],
+  CE7319: ["Design of Steel Structures", 4, ["CE7311"]],
+  CE7410: ["Concrete Structures Design Sessional", 1, ["CE7315"]],
+  CE7411: ["Structural Analysis-II", 3, ["CE7311"]],
+  CE7412: ["Computer Aided Analysis and Design of Structures Sessional", 1, ["CE7315", "CE7319"]],
+
+  // ---- Civil: Environmental Engineering (7 credits) ----
+  CE7331: ["Environmental Engineering-I", 4, []],
+  CE7431: ["Environmental Engineering-II", 3, ["CE7331"]],
+
+  // ---- Civil: Geotechnical Engineering (7 credits) ----
+  CE7341: ["Geotechnical Engineering-I", 4, ["CE7203", "CE7213"]],
+  CE7441: ["Geotechnical Engineering-II", 3, ["CE7341"]],
+
+  // ---- Civil: Transportation Engineering (7 credits) ----
+  CE7351: ["Transportation Engineering-I", 3, []],
+  CE7451: ["Transportation Engineering-II", 4, ["CE7351"]],
+
+  // ---- Civil: Water Resources Engineering (7 credits) ----
+  CE7361: ["Water Resources Engineering-I", 4, ["CE7261"]],
+  CE7461: ["Water Resources Engineering-II", 3, ["CE7361"]],
+
+  // ---- Civil: Civil Engineering Practice (8 credits) ----
+  CE7301: ["Professional Practices and Communication", 3, []],
+  CE7305: ["Sustainability and Impact Assessment of Development Projects", 2, []],
+  CE7401: ["Project Planning and Construction Management", 3, []],
+
+  // ---- Civil: Elective Civil Engineering pool (choose 2 of 5 groups, 2 courses
+  //      per group = 8 credits). All entries require every CE7300-level course
+  //      per the curriculum export. ----
+  CE7413: ["Introduction to Steel-Concrete Composite Structures", 2, []],
+  CE7415: ["Prestressed Concrete", 2, []],
+  CE7419: ["Introduction to Finite Element Method", 2, []],
+  CE7421: ["Dynamics of Structures", 2, []],
+  CE7423: ["Design of Concrete Structures-III", 2, []],
+  CE7425: ["Data Analytics for Civil Infrastructures", 2, []],
+  CE7433: ["Solid and Hazardous Waste Management", 2, []],
+  CE7435: ["Environmental Pollution Management", 2, []],
+  CE7437: ["Environmental and Sustainable Management", 2, []],
+  CE7443: ["Earth Retaining Structures", 2, []],
+  CE7445: ["Elementary Soil Dynamics", 2, []],
+  CE7447: ["Soil-Water Interaction", 2, []],
+  CE7455: ["Traffic Engineering Design and Management", 2, []],
+  CE7457: ["Pavement Management, Drainage and Airport", 2, []],
+  CE7459: ["Urban Transportation Planning and Management", 2, []],
+  CE7465: ["Flood Mitigation and Management", 2, []],
+  CE7467: ["Groundwater Engineering", 2, []],
+  CE7469: ["River Engineering", 2, []],
+  CE7471: ["Hydraulic Structures", 2, []],
+  CE7473: ["Coastal Engineering", 2, []],
+
+  // ---- Civil: Capstone (6 credits) ----
+  CE7400: ["Capstone Project", 6, []],
+
   // ---- DSA (B.Sc. in Data Science and Analytics) core sequence ----
   // Titles, credits and prerequisites confirmed from the DSA curriculum PDF's
   // Course Description and Advising Criteria sections (Fall-2024 version).
@@ -285,6 +381,14 @@ const EEE_NONENG_POOL = ["ECO101", "ECO7101", "MIS101", "MKT101"];
 
 const EEE_ELECTIVE_POOL = ["CSE436", "CSE450", "EEE413", "EEE414", "EEE415", "EEE416", "EEE417", "EEE418", "EEE419", "EEE421", "EEE422", "EEE423", "EEE425", "EEE426", "EEE433", "EEE434", "EEE435", "EEE436", "EEE441", "EEE442", "EEE444", "EEE445", "EEE446", "EEE447", "EEE450", "EEE490"];
 
+// ---- Civil elective / GED pools — from the Civil Engineering Fall-2024 curriculum export ----
+const CIVIL_OPEN_HUM_POOL = ["GEN7201", "GEN7205", "GEN7207", "GEN7239", "SOC7101"]; // Open Humanities/Sociology: choose 2
+const CIVIL_BUSECO_POOL = ["ACT7101", "MGT7101", "MKT7101", "ECO7101", "EDC7101"]; // Business/Entrepreneurship/Economics: choose 2
+const CIVIL_ELECTIVE_POOL = ["CE7413", "CE7415", "CE7419", "CE7421", "CE7423", "CE7425", "CE7433", "CE7435", "CE7437", "CE7443", "CE7445", "CE7447", "CE7455", "CE7457", "CE7459", "CE7465", "CE7467", "CE7469", "CE7471", "CE7473"];
+const CIVIL_ADVICE = {
+  CE7400: "Capstone Project — requires 102 completed credits and all CE7300-level core courses. Registered in the 1st semester of 4th year, but the project continues for a full year; the result is assigned one year after registration."
+};
+
 // ---- DSA elective / GED pools — from the DSA curriculum PDF's "Program Structure" and "Legends" sections ----
 const DSA_BES_POOL = ["BUS101", "EDC101", "GEN206"]; // Part (ii): Business/Entrepreneurship/Social Sciences (choose 1 -> BES001)
 const DSA_QSE_POOL = ["PHY100", "GEB101", "GEN203", "SOC212"]; // Part (iv): Quantitative/Science/Environment (choose 2 -> QSE001-002)
@@ -412,6 +516,38 @@ const EEE_YEARS = [
 ];
 
 
+const CIVIL_YEARS = [
+  {
+    name: "1st Year", total: 35, semesters: [
+      { name: "Semester 1", total: 10, courses: ["ENG7101", "MAT7101", "CE7100", "CE7101"] },
+      { name: "Semester 2", total: 13, courses: ["ENG7102", "MAT7102", "EEE7165", "CE7103"] },
+      { name: "Semester 3", total: 12, courses: ["MAT7104", "PHY7107", "CHE7107", "CE7102"] }
+    ]
+  },
+  {
+    name: "2nd Year", total: 36, semesters: [
+      { name: "Semester 1", total: 11, courses: ["GEN7226", "STA7102", "CE7200", "CE7201"] },
+      { name: "Semester 2", total: 12, courses: ["CE7227", "CE7203", "CE7208", "CE7211"] },
+      { name: "Semester 3", total: 13, courses: [slot("OHC-I", 3, "Open Humanities Course 1", "Choose one course from the Civil Open Humanities/Sociology pool", "gen_ed", CIVIL_OPEN_HUM_POOL), slot("BEEC-I", 3, "Business, Entrepreneurship & Economics Course 1", "Choose one course from the Civil Business/Entrepreneurship/Economics pool", "open", CIVIL_BUSECO_POOL), "CE7213", "CE7261"] }
+    ]
+  },
+  {
+    name: "3rd Year", total: 37, semesters: [
+      { name: "Semester 1", total: 13, courses: [slot("OHC-II", 3, "Open Humanities Course 2", "Choose a second course from the Civil Open Humanities/Sociology pool", "gen_ed", CIVIL_OPEN_HUM_POOL), "CE7301", "CE7311", "CE7331"] },
+      { name: "Semester 2", total: 13, courses: [slot("BEEC-II", 3, "Business, Entrepreneurship & Economics Course 2", "Choose a second course from the Civil Business/Entrepreneurship/Economics pool", "open", CIVIL_BUSECO_POOL), "CE7305", "CE7315", "CE7341"] },
+      { name: "Semester 3", total: 11, courses: ["CE7319", "CE7351", "CE7361"] }
+    ]
+  },
+  {
+    name: "4th Year", total: 37, semesters: [
+      { name: "Semester 1", total: 13, courses: ["CE7410", "CE7411", "CE7412", "CE7417", "CE7400"] },
+      { name: "Semester 2", total: 13, courses: ["CE7401", "CE7441", "CE7451", "CE7461"] },
+      { name: "Semester 3", total: 11, courses: ["CE7431", slot("ECEC-I", 4, "Elective Civil Engineering Course 1", "Choose 2 courses each from 2 of the 5 elective groups (Structural, Environmental, Geotechnical, Transportation, Water Resources) — this is the first course", "open", CIVIL_ELECTIVE_POOL), slot("ECEC-II", 4, "Elective Civil Engineering Course 2", "Second course from your first chosen elective group", "open", CIVIL_ELECTIVE_POOL)] }
+    ]
+  }
+];
+
+
 const DSA_YEARS = [
   {
     name: "1st Year", total: 35, semesters: [
@@ -509,6 +645,23 @@ const PROGRAMS = {
     generalEd: GENERAL_ED_POOL,
     viewType: "roadmap",
     years: EEE_YEARS,
+  },
+  civil: {
+    key: "civil",
+    label: "Civil",
+    fullName: "B.Sc. in Civil Engineering",
+    catalogLabel: "According to Fall-2024 curriculum · 145 credits · 4 years · 12 semesters",
+    totalCredits: 145,
+    summary: [
+      { label: "General Education", value: "48 cr" },
+      { label: "Core Civil Engineering", value: "83 cr" },
+      { label: "Civil Engineering Electives", value: "8 cr" },
+      { label: "Capstone Project", value: "6 cr" }
+    ],
+    generalEd: GENERAL_ED_POOL,
+    advice: CIVIL_ADVICE,
+    viewType: "roadmap",
+    years: CIVIL_YEARS,
   },
   dsa: {
     key: "dsa",

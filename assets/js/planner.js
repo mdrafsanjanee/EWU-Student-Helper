@@ -8,6 +8,7 @@ const DEPARTMENTS = [
   ["CSE", "Department of Computer Science and Engineering"],
   ["ECE", "Department of Electrical and Computer Engineering"],
   ["EEE", "Department of Electrical and Electronic Engineering"],
+  ["CE", "Department of Civil Engineering"],
   ["ENG", "Department of English"],
   ["MAT", "Department of Mathematics and Data Science"],
   ["PHY", "Department of Physics"],
@@ -26,9 +27,7 @@ const DEPARTMENTS = [
 const knownDept = new Map(DEPARTMENTS);
 
 function getPlannerData() {
-  // planner-data.js declares PLANNER_DATA as a global lexical binding, which is
-  // not exposed as window.PLANNER_DATA. Support both forms so recommendations
-  // and course metadata work reliably in a plain GitHub Pages setup.
+
   if (typeof PLANNER_DATA !== "undefined") return PLANNER_DATA;
   return window.PLANNER_DATA || {};
 }
@@ -73,8 +72,7 @@ function parseOfferedPage(items) {
   const words = items.filter(i => String(i.str || "").trim()).map(i => ({
     text: String(i.str).trim(), x: Number(i.transform?.[4] || 0), y: Number(i.transform?.[5] || 0)
   }));
-  // EWU's printed table uses fixed x-columns. We intentionally parse the timing
-  // column as its own stream because the end time wraps onto a second line.
+
   const courseWords = words.filter(w => w.x < 90);
   const sectionWords = words.filter(w => w.x >= 88 && w.x < 130);
   const timingWords = words.filter(w => w.x >= 130 && w.x < 225);

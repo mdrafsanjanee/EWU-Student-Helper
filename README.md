@@ -6,7 +6,7 @@ A web-based student utility designed to make everyday academic tasks at **East W
 
 The project is hosted using **GitHub Pages**.
 
-> [Live Demo](https://mdrafsanjanee.github.io/EWU-Student-Helper/)
+> [Live Demo](https://ewustudenthelper.vercel.app/)
 
 ## 📱 Android App
 

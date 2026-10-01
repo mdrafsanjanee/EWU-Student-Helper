@@ -30,13 +30,14 @@
     <meta name="twitter:title" content="EWU Student Helper - Free Tools for East West University Students">
     <meta name="twitter:description" content="Free tools for East West University (EWU) students: CGPA calculator, course planner, routine generator, and curriculum guide, all in one place.">
     <meta name="twitter:image" content="https://ewustudenthelper.vercel.app/assets/img/og/og-home.jpg">
-    <link rel="icon" type="image/x-icon" href="assets/img/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+    <link rel="preload" as="image" href="assets/img/header-mobile.webp" type="image/webp" media="(max-width: 800px)" fetchpriority="high">
+    <link rel="preload" as="image" href="assets/img/header.webp" type="image/webp" media="(min-width: 801px)" fetchpriority="high">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic&amp;display=swap">
     <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
-    <link rel="stylesheet" href="assets/css/./embed/animation/aos.min.css">
-    <link rel="stylesheet" href="assets/css/baguetteBox.min.css">
+    <link rel="stylesheet" href="assets/css/embed/animation/aos.min.css">
+    <link rel="stylesheet" href="assets/css/baguetteBox.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="assets/css/baguetteBox.min.css"></noscript>
     <link href="assets/css/style.css" rel="stylesheet">
 </head>
 
@@ -53,7 +54,7 @@
             </div>
         </div>
     </nav>
-    <header class="text-center text-white d-flex masthead" style="background-image:url('assets/img/header.jpg');">
+    <header class="text-center text-white d-flex masthead" style="background-image:url('assets/img/header-mobile.webp');">
         <div class="container my-auto">
             <div class="row">
                 <div class="col-lg-10 mx-auto">
@@ -66,6 +67,7 @@
             </div>
         </div>
     </header>
+    <main id="main">
     <section id="services">
         <div class="container">
             <div class="row">
@@ -107,7 +109,7 @@
     <section class="p-0" id="portfolio">
         <div class="container-fluid p-0">
             <div class="row g-0 popup-gallery">
-                <div class="col-sm-6 col-lg-4"><a class="portfolio-box" href="assets/img/fullsize/1.PNG"><img class="img-fluid" src="assets/img/thumbnails/1.PNG">
+                <div class="col-sm-6 col-lg-4"><a class="portfolio-box" href="assets/img/fullsize/1.webp"><img class="img-fluid" src="assets/img/thumbnails/1.webp" width="640" height="360" loading="lazy" decoding="async" alt="East West University main campus">
                         <div class="portfolio-box-caption">
                             <div class="portfolio-box-caption-content">
                                 <div class="project-category text-faded"><span>East West University</span></div>
@@ -115,7 +117,7 @@
                             </div>
                         </div>
                     </a></div>
-                <div class="col-sm-6 col-lg-4"><a class="portfolio-box" href="assets/img/fullsize/2.PNG"><img class="img-fluid" src="assets/img/thumbnails/2.PNG">
+                <div class="col-sm-6 col-lg-4"><a class="portfolio-box" href="assets/img/fullsize/2.webp"><img class="img-fluid" src="assets/img/thumbnails/2.webp" width="640" height="360" loading="lazy" decoding="async" alt="East West University garden">
                         <div class="portfolio-box-caption">
                             <div class="portfolio-box-caption-content">
                                 <div class="project-category text-faded"><span>East West University</span></div>
@@ -123,7 +125,7 @@
                             </div>
                         </div>
                     </a></div>
-                <div class="col-sm-6 col-lg-4"><a class="portfolio-box" href="assets/img/fullsize/3.jpg"><img class="img-fluid" src="assets/img/thumbnails/3.jpg">
+                <div class="col-sm-6 col-lg-4"><a class="portfolio-box" href="assets/img/fullsize/3.webp"><img class="img-fluid" src="assets/img/thumbnails/3.webp" width="640" height="360" loading="lazy" decoding="async" alt="East West University main building">
                         <div class="portfolio-box-caption">
                             <div class="portfolio-box-caption-content">
                                 <div class="project-category text-faded"><span>East West University</span></div>
@@ -131,7 +133,7 @@
                             </div>
                         </div>
                     </a></div>
-                <div class="col-sm-6 col-lg-4"><a class="portfolio-box" href="assets/img/fullsize/4.png"><img class="img-fluid" src="assets/img/thumbnails/4.png">
+                <div class="col-sm-6 col-lg-4"><a class="portfolio-box" href="assets/img/fullsize/4.webp"><img class="img-fluid" src="assets/img/thumbnails/4.webp" width="640" height="360" loading="lazy" decoding="async" alt="Student portal advising rules page">
                         <div class="portfolio-box-caption">
                             <div class="portfolio-box-caption-content">
                                 <div class="project-category text-faded"><span>Student Portal</span></div>
@@ -139,7 +141,7 @@
                             </div>
                         </div>
                     </a></div>
-                <div class="col-sm-6 col-lg-4"><a class="portfolio-box" href="assets/img/fullsize/5.png"><img class="img-fluid" src="assets/img/thumbnails/5.png">
+                <div class="col-sm-6 col-lg-4"><a class="portfolio-box" href="assets/img/fullsize/5.webp"><img class="img-fluid" src="assets/img/thumbnails/5.webp" width="640" height="360" loading="lazy" decoding="async" alt="Student portal offered courses page">
                         <div class="portfolio-box-caption">
                             <div class="portfolio-box-caption-content">
                                 <div class="project-category text-faded"><span>Student Portal</span></div>
@@ -147,7 +149,7 @@
                             </div>
                         </div>
                     </a></div>
-                <div class="col-sm-6 col-lg-4"><a class="portfolio-box" href="assets/img/fullsize/6.png"><img class="img-fluid" src="assets/img/thumbnails/6.png">
+                <div class="col-sm-6 col-lg-4"><a class="portfolio-box" href="assets/img/fullsize/6.webp"><img class="img-fluid" src="assets/img/thumbnails/6.webp" width="640" height="360" loading="lazy" decoding="async" alt="Student portal class routine page">
                         <div class="portfolio-box-caption">
                             <div class="portfolio-box-caption-content">
                                 <div class="project-category text-faded"><span>Student Portal</span></div>
@@ -169,17 +171,18 @@
                 <div class="col-lg-8 text-center mx-auto">
                     <h2 class="section-heading">Let's Get In Touch!</h2>
                     <hr class="my-4">
-                    <p class="mb-5">This project was build by Md. Rafsan Janee to help the students of EWU</p><a href="https://mdrafsanjanee.github.io/PersonalResume/" target="_blank">Portfolio</a>
+                    <p class="mb-5">This project was build by Md. Rafsan Janee to help the students of EWU</p><a href="https://mdrafsanjanee.vercel.app/" target="_blank">Portfolio</a>
                 </div>
             </div>
         </div>
         <footer></footer>
     </section>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/./embed/animation/aos.min.js"></script>
-    <script src="assets/js/bs-init.js"></script>
-    <script src="assets/js/baguetteBox.min.js"></script>
-    <script src="assets/js/creative.js"></script>
+    </main>
+    <script defer src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script defer src="assets/js/embed/animation/aos.min.js"></script>
+    <script defer src="assets/js/bs-init.js"></script>
+    <script defer src="assets/js/baguetteBox.min.js"></script>
+    <script defer src="assets/js/creative.js"></script>
     <footer class="page-footer">Copyright (c) 2026 MD. RAFSAN JANEE</footer>
 </body>
 </html>

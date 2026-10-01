@@ -16,6 +16,37 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.course-note {
+  padding: 0 14px 13px;
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.course-note-foot {
+  padding: 12px 14px;
+  border-top: 1px solid var(--line);
+}
+
+.slot-body {
+  padding: 0 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slot-body .course-note {
+  padding: 0;
+}
+
+.slot-actions {
+  padding: 0 14px 6px;
+}
+
+.slot-actions .btn-link {
+  padding: 0;
+  font-size: .78rem;
+}
+
 .course-list > .dept-block {
   flex-shrink: 0;
 }
@@ -32,4 +63,55 @@
     height: 700px;
     max-height: 700px;
   }
+}
+
+/* Course header tile: gray, larger code, so it stands apart from the section rows beneath it */
+body.creative-theme .course-list .course-head {
+  background: #e9ecef;
+  border-top: 1px solid #d5d9de;
+  border-bottom: 1px solid #d5d9de;
+}
+
+body.creative-theme .course-list .course-code-head {
+  font: 900 1.25rem "Open Sans", Arial, sans-serif;
+  letter-spacing: .01em;
+  color: #1f2328;
+}
+
+body.creative-theme .course-list .course-name {
+  color: #4b5563;
+  font-size: .88rem;
+  font-weight: 700;
+}
+
+body.creative-theme .course-list .course-head > span {
+  color: #4b5563;
+  font-weight: 800;
+}
+
+/* Recommended chips */
+body.creative-theme .course-chip.active {
+  background: #f05f40;
+  border-color: #f05f40;
+  color: #fff;
+}
+
+body.creative-theme .course-chip.chosen {
+  border-color: #2f9e62;
+  color: #2f9e62;
+  background: #eefaf3;
+}
+
+body.creative-theme .course-chip.active.chosen {
+  background: #f05f40;
+  border-color: #f05f40;
+  color: #fff;
+}
+
+body.creative-theme .course-chip.slot-chip {
+  border-style: dashed;
+}
+
+body.creative-theme .course-chip.not-offered:not(.active) {
+  opacity: .55;
 }

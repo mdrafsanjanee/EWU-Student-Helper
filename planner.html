@@ -60,14 +60,16 @@
             <div>
                 <div class="eyebrow">COURSE PLANNER</div>
                 <h1>Build your semester</h1>
-                <p class="text-secondary mb-0">Import the offered-course PDFs you need, choose one section per course,
+                <p class="text-secondary mb-0">Pick your program and semester, import the offered-courses PDF, choose one section per course,
                     and catch clashes before exporting your routine.</p>
             </div>
             <div class="planner-toolbar-right">
-                <div class="small-label">Imported department data</div>
-                <button id="importSectionsBtn" class="btn btn-outline-primary w-100">Import department PDF</button>
+                <div class="small-label">Program</div>
+                <select id="programSelect" class="form-select mb-3"></select>
+                <div class="small-label">Offered courses</div>
+                <button id="importSectionsBtn" class="btn btn-outline-primary w-100">Import offered-courses PDF</button>
                 <input id="sectionPdfInput" type="file" accept="application/pdf,.pdf" multiple hidden>
-                <div id="importedDeptSummary" class="imported-summary mt-2">No department data imported</div>
+                <div id="importedDeptSummary" class="imported-summary mt-2">No offered-courses PDF imported</div>
             </div>
         </header>
         <div id="plannerStatus" class="alert alert-info d-none" role="status"></div>
@@ -76,8 +78,8 @@
                 <div class="panel-head">
                     <div>
                         <h2>Courses</h2>
-                        <p>Imported courses stay in the order provided by EWU. Search across all imported departments.
-                        </p>
+                        <p>Pick a semester to get its recommended courses, then tap one to see its sections. You can
+                            also search any course by code or name.</p>
                     </div>
                 </div>
                 <div id="recommendedWrap" class="recommended-wrap d-none">
@@ -87,21 +89,7 @@
                 <div class="planner-search-row">
                     <input id="courseSearch" class="form-control form-control-lg" type="search"
                         placeholder="Search course code or name…">
-                    <select id="recommendedSemester" class="form-select form-select-lg">
-                        <option value="">Recommended semester</option>
-                        <option value="1">Semester 1</option>
-                        <option value="2">Semester 2</option>
-                        <option value="3">Semester 3</option>
-                        <option value="4">Semester 4</option>
-                        <option value="5">Semester 5</option>
-                        <option value="6">Semester 6</option>
-                        <option value="7">Semester 7</option>
-                        <option value="8">Semester 8</option>
-                        <option value="9">Semester 9</option>
-                        <option value="10">Semester 10</option>
-                        <option value="11">Semester 11</option>
-                        <option value="12">Semester 12</option>
-                    </select>
+                    <select id="recommendedSemester" class="form-select form-select-lg"></select>
                 </div>
                 <div id="courseList" class="course-list"></div>
             </section>
@@ -128,6 +116,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="assets/js/planner-data.js"></script>
     <script src="assets/js/common.js"></script>
+    <script src="assets/js/curriculum-data.js"></script>
     <script src="assets/js/planner.js"></script>
     <script src="assets/js/planner-persistence.js"></script>
     <script src="assets/js/creative.js"></script>

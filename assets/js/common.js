@@ -152,9 +152,11 @@ function renderDay(day, dayData) {
   return html + `</div></article>`;
 }
 
-async function exportRoutinePDF(schedule, title = "Routine") {
-  const { jsPDF } = window.jspdf;
-  if (!window.html2canvas || !jsPDF) throw new Error("PDF export libraries could not load.");
+/* Renders the weekly routine into one off-screen sheet and returns it as a single canvas.
+   The sheet is always laid out at a fixed desktop width (windowWidth below), so phones get the
+   same one-piece image as desktops instead of the narrow, stacked mobile layout. */
+async function renderRoutineCanvas(schedule, title = "Routine") {
+  if (!window.html2canvas) throw new Error("Image export library could not load.");
   const normalized = normalizeSchedule(schedule);
   const analysis = analyzeSchedule(normalized);
   const shell = document.createElement("div");
@@ -172,31 +174,52 @@ async function exportRoutinePDF(schedule, title = "Routine") {
   shell.appendChild(temp);
   document.body.appendChild(shell);
   try {
-    const canvas = await html2canvas(temp, { scale: 2, backgroundColor: "#f3f6fb", useCORS: true });
-    const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
-    const margin = 6;
-    const pw = pdf.internal.pageSize.getWidth();
-    const ph = pdf.internal.pageSize.getHeight();
-    const usableW = pw - margin * 2;
-    const pageCanvasHeight = Math.floor(canvas.width * ((ph - margin * 2) / usableW));
-    let y = 0, first = true;
-    while (y < canvas.height) {
-      const slice = document.createElement("canvas");
-      slice.width = canvas.width;
-      slice.height = Math.min(pageCanvasHeight, canvas.height - y);
-      const ctx = slice.getContext("2d");
-      ctx.drawImage(canvas, 0, y, canvas.width, slice.height, 0, 0, slice.width, slice.height);
-      if (!first) pdf.addPage();
-      const imgH = slice.height * usableW / slice.width;
-      pdf.addImage(slice.toDataURL("image/png"), "PNG", margin, margin, usableW, imgH);
-      y += slice.height;
-      first = false;
-    }
-    const safe = (title || "routine").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "routine";
-    pdf.save(`${safe}.pdf`);
+    if (document.fonts?.ready) await document.fonts.ready;
+    const width = shell.offsetWidth;
+    const height = shell.offsetHeight;
+    // Stay under mobile browsers' canvas size limits (~16M pixels on iOS Safari).
+    const scale = Math.max(1, Math.min(2, Math.sqrt(12000000 / (width * height))));
+    return await html2canvas(shell, {
+      scale, width, height, windowWidth: 1400, scrollX: 0, scrollY: 0,
+      backgroundColor: "#f3f6fb", useCORS: true
+    });
   } finally {
     shell.remove();
   }
+}
+
+function routineFileName(title, ext) {
+  const safe = (title || "routine").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "routine";
+  return `${safe}.${ext}`;
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+async function exportRoutinePNG(schedule, title = "Routine") {
+  const canvas = await renderRoutineCanvas(schedule, title);
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+  if (!blob) throw new Error("The routine image could not be created.");
+  downloadBlob(blob, routineFileName(title, "png"));
+}
+
+async function exportRoutinePDF(schedule, title = "Routine") {
+  const { jsPDF } = window.jspdf || {};
+  if (!jsPDF) throw new Error("PDF export library could not load.");
+  const canvas = await renderRoutineCanvas(schedule, title);
+  // One page sized to the routine, so the week is never split across pages.
+  const w = canvas.width, h = canvas.height;
+  const pdf = new jsPDF({ orientation: w >= h ? "landscape" : "portrait", unit: "px", format: [w, h], compress: true, hotfixes: ["px_scaling"] });
+  pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, w, h);
+  pdf.save(routineFileName(title, "pdf"));
 }
 
 function savePlannerPayload(schedule) {

@@ -757,6 +757,16 @@ body {
     width: 1344px
 }
 
+/* The export sheet must keep its desktop layout even on phones (media queries above would stack it). */
+.pdf-sheet-shell .summary-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr))
+}
+
+.pdf-sheet-shell .routine-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    min-width: 0
+}
+
 .page-footer {
     margin-top: 40px;
     padding: 24px 20px;

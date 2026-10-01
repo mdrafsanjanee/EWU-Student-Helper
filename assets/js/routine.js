@@ -4,6 +4,7 @@ const els = { title: $("routineTitle"), badge: $("semesterBadge"), summary: $("s
 function loadSchedule(next, sourceMessage = "") {
   schedule = normalizeSchedule(next);
   renderRoutine(schedule, els);
+  $("exportPng").disabled = false;
   $("exportPdf").disabled = false;
   if (sourceMessage) showStatus($("routineStatus"), sourceMessage, "success");
 }
@@ -129,23 +130,27 @@ $("excelInput").addEventListener("change", async e => {
   }
 });
 
-$("exportPdf").addEventListener("click", async () => {
-  if (!schedule) return;
-  const btn = $("exportPdf");
-  const original = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = "Exporting…";
-  try {
-    await exportRoutinePDF(schedule, schedule.title || "Routine");
-    showStatus($("routineStatus"), "Routine exported as PDF.", "success");
-  } catch (err) {
-    console.error(err);
-    showStatus($("routineStatus"), `Could not export PDF: ${err.message}`, "danger");
-  } finally {
-    btn.innerHTML = original;
-    btn.disabled = !schedule;
-  }
-});
+function wireExport(id, label, run) {
+  $(id).addEventListener("click", async () => {
+    if (!schedule) return;
+    const btn = $(id);
+    const original = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = "Exporting…";
+    try {
+      await run(schedule, schedule.title || "Routine");
+      showStatus($("routineStatus"), `Routine exported as ${label}.`, "success");
+    } catch (err) {
+      console.error(err);
+      showStatus($("routineStatus"), `Could not export ${label}: ${err.message}`, "danger");
+    } finally {
+      btn.innerHTML = original;
+      btn.disabled = !schedule;
+    }
+  });
+}
+wireExport("exportPng", "PNG", exportRoutinePNG);
+wireExport("exportPdf", "PDF", exportRoutinePDF);
 
 const planned = loadPlannerPayload();
 if (planned) loadSchedule(planned, "Routine loaded from Course Planner.");

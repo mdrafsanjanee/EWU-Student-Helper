@@ -1,15 +1,3 @@
-/* ============================================================
-   App Theme — Course Planner & Routine Generator
-   Re-skins the tool pages to match the flat, bordered, orange-
-   accented "creative" system already established by the
-   homepage (creative-theme.css) and the Curriculum page
-   (curriculum.css): Open Sans for labels/headings, Merriweather
-   for body copy, #f05f40 accent, sharp/flat cards with thin
-   borders instead of heavy rounded corners + blue gradients.
-   Loads after style.css / creative-theme.css so it wins the
-   cascade on shared class names.
-   ============================================================ */
-
 body.creative-theme {
   background: #f7f7f7;
   padding-top: 86px;
@@ -124,7 +112,7 @@ body.creative-theme .dept-head strong {
   color: #212529;
 }
 
-body.creative-theme .dept-head > span {
+body.creative-theme .dept-head>span {
   font-family: "Open Sans", Arial, sans-serif;
   color: #999;
 }
@@ -148,7 +136,7 @@ body.creative-theme .course-name {
   color: #888;
 }
 
-body.creative-theme .course-head > span {
+body.creative-theme .course-head>span {
   font-family: "Open Sans", Arial, sans-serif;
   color: #999;
 }
@@ -169,7 +157,7 @@ body.creative-theme .section-row.selected {
   border-left-color: #f05f40;
 }
 
-body.creative-theme .section-info > strong {
+body.creative-theme .section-info>strong {
   font: 800 .81rem "Open Sans", Arial, sans-serif;
   color: #212529;
 }

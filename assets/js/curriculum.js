@@ -155,9 +155,6 @@ function applyTrackHighlight() {
   });
 }
 
-/* Flat catalog view — kept for a future program where we only have a course
-   list and no confirmed semester plan yet. Neither CSE nor EEE needs it now
-   that the EEE flowchart gives a full semester-by-semester layout. */
 function renderCatalog(p) {
   CURRENT_SLOTS = [];
   const noteHtml = p.note ? `<div class="catalog-note"><i class="fa fa-exclamation-circle"></i><span>${p.note}</span></div>` : "";

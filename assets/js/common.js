@@ -152,9 +152,6 @@ function renderDay(day, dayData) {
   return html + `</div></article>`;
 }
 
-/* Renders the weekly routine into one off-screen sheet and returns it as a single canvas.
-   The sheet is always laid out at a fixed desktop width (windowWidth below), so phones get the
-   same one-piece image as desktops instead of the narrow, stacked mobile layout. */
 async function renderRoutineCanvas(schedule, title = "Routine") {
   if (!window.html2canvas) throw new Error("Image export library could not load.");
   const normalized = normalizeSchedule(schedule);

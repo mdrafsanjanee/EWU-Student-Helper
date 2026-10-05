@@ -44,8 +44,7 @@ const COURSES = {
   CSE488: ["Big Data Analytics", 4, ["CSE302"]], CSE489: ["Mobile Programming", 4, ["CSE246"]],
   CSE491: ["VLSI Design", 4, ["CSE345"]], CSE492: ["Robotics", 4, ["CSE366"]], CSE494: ["Embedded Systems", 4, ["CSE442"]],
 
-  // ---- General education elective pool (shared — confirmed by both the CSE and EEE
-  //      curriculum exports, which list the same GEN/POP/JPN codes) ----
+  // ---- General education elective pool (shared by both the CSE and EEE
   ACT101: ["Financial Accounting", 3, []], BUS231: ["Business Communication", 3, ["ENG101"]],
   BUS321: ["Business for Engineering and Technology", 3, ["ENG101"]], ECO101: ["Principles of Microeconomics", 3, []],
   FIN101: ["Principles of Finance", 3, ["STA102"]], GEN201: ["Bangladesh Studies", 3, ["ENG101"]],
@@ -66,7 +65,6 @@ const COURSES = {
   SOC317: ["Sociology of Science and Technology", 3, []],
 
   // ---- EEE courses ----
-  // Titles + credits confirmed from the curriculum export:
   EEE101: ["Electrical Circuits I", 4, []],
   EEE102: ["Electronic Circuits I", 4, []],
   EEE105: ["Computer Programming", 4, []],
@@ -90,7 +88,7 @@ const COURSES = {
   EEE400B: ["Final Year Design Project Part 2", 2, []],
   EEE400C: ["Final Year Design Project Part 3", 3, []],
 
-  // ---- EEE: ELECT elective pool (20 credits) — from the curriculum export ----
+  // ---- EEE: ELECT elective pool (20 credits) ----
   EEE413: ["Fundamentals of Nanotechnology", 3, []],
   EEE414: ["Optoelectronics", 3, []],
   EEE415: ["Semiconductor Processing and Fabrication", 4, []],
@@ -119,7 +117,7 @@ const COURSES = {
   CSE436: ["Multimedia Design & Development", 3, []],
   CSE450: ["Data Structure and Algorithm", 4, []],
 
-  // ---- EEE: Non-Engineering elective pool (3 credits) — from the curriculum export ----
+  // ---- EEE: Non-Engineering elective pool (3 credits) ----
   ECO7101: ["Principles of Microeconomics", 3, []],
   MIS101: ["Introduction to Management Information System", 3, []],
 
@@ -193,8 +191,6 @@ const COURSES = {
   CE7401: ["Project Planning and Construction Management", 3, []],
 
   // ---- Civil: Elective Civil Engineering pool (choose 2 of 5 groups, 2 courses
-  //      per group = 8 credits). All entries require every CE7300-level course
-  //      per the curriculum export. ----
   CE7413: ["Introduction to Steel-Concrete Composite Structures", 2, []],
   CE7415: ["Prestressed Concrete", 2, []],
   CE7419: ["Introduction to Finite Element Method", 2, []],
@@ -220,8 +216,6 @@ const COURSES = {
   CE7400: ["Capstone Project", 6, []],
 
   // ---- DSA (B.Sc. in Data Science and Analytics) core sequence ----
-  // Titles, credits and prerequisites confirmed from the DSA curriculum PDF's
-  // Course Description and Advising Criteria sections (Fall-2024 version).
   STA191: ["Probability & Statistics", 3, []],
   STA293: ["Probability Distributions", 3, ["STA191"]],
   STA395: ["Statistical Inference", 3, ["STA293"]],
@@ -350,11 +344,6 @@ const COURSES = {
   ECM004: ["Elective Course 4", 3, []],
 
   // ---- MATH: ECM elective-module pool (MATH_ECM_POOL) ----
-  // Titles/credits confirmed from the official EWU MPS "Category of Courses" page
-  // (fse.ewubd.edu/mathematical-physical-science/category-courses). That page and
-  // the department's Course Description page do not publish prerequisites for this
-  // 16-course pool (same pattern as the uploaded PDF's MATH420-490 electives, whose
-  // "Prerequisites:" fields are also all blank) — so prereqs are left empty ([]).
   MAT421: ["Mathematical Modeling in Biology", 3, []],
   MAT422: ["Mathematical Modeling in Finance and Business Management", 3, []],
   MAT424: ["Applied Analysis", 3, []],
@@ -382,19 +371,19 @@ const EEE_NONENG_POOL = ["ECO101", "ECO7101", "MIS101", "MKT101"];
 const EEE_ELECTIVE_POOL = ["CSE436", "CSE450", "EEE413", "EEE414", "EEE415", "EEE416", "EEE417", "EEE418", "EEE419", "EEE421", "EEE422", "EEE423", "EEE425", "EEE426", "EEE433", "EEE434", "EEE435", "EEE436", "EEE441", "EEE442", "EEE444", "EEE445", "EEE446", "EEE447", "EEE450", "EEE490"];
 
 // ---- Civil elective / GED pools — from the Civil Engineering Fall-2024 curriculum export ----
-const CIVIL_OPEN_HUM_POOL = ["GEN7201", "GEN7205", "GEN7207", "GEN7239", "SOC7101"]; // Open Humanities/Sociology: choose 2
-const CIVIL_BUSECO_POOL = ["ACT7101", "MGT7101", "MKT7101", "ECO7101", "EDC7101"]; // Business/Entrepreneurship/Economics: choose 2
+const CIVIL_OPEN_HUM_POOL = ["GEN7201", "GEN7205", "GEN7207", "GEN7239", "SOC7101"];
+const CIVIL_BUSECO_POOL = ["ACT7101", "MGT7101", "MKT7101", "ECO7101", "EDC7101"];
 const CIVIL_ELECTIVE_POOL = ["CE7413", "CE7415", "CE7419", "CE7421", "CE7423", "CE7425", "CE7433", "CE7435", "CE7437", "CE7443", "CE7445", "CE7447", "CE7455", "CE7457", "CE7459", "CE7465", "CE7467", "CE7469", "CE7471", "CE7473"];
 const CIVIL_ADVICE = {
   CE7400: "Capstone Project — requires 102 completed credits and all CE7300-level core courses. Registered in the 1st semester of 4th year, but the project continues for a full year; the result is assigned one year after registration."
 };
 
 // ---- DSA elective / GED pools — from the DSA curriculum PDF's "Program Structure" and "Legends" sections ----
-const DSA_BES_POOL = ["BUS101", "EDC101", "GEN206"]; // Part (ii): Business/Entrepreneurship/Social Sciences (choose 1 -> BES001)
-const DSA_QSE_POOL = ["PHY100", "GEB101", "GEN203", "SOC212"]; // Part (iv): Quantitative/Science/Environment (choose 2 -> QSE001-002)
+const DSA_BES_POOL = ["BUS101", "EDC101", "GEN206"];
+const DSA_QSE_POOL = ["PHY100", "GEB101", "GEN203", "SOC212"];
 const DSA_OPEN_GED_POOL = ["PPHS102", "GEN205", "GEN206", "GEN207", "GEN208", "GEN210", "GEN211", "GEN239", "ACT101", "ECO101", "ECO102", "FIN101", "MGT101", "MKT101"]; // Part (f): Open GED (choose 4 -> OPT001-004)
-const DSA_ELECTIVE_GROUP_A = ["STA430", "STA432", "STA434", "STA436", "STA438", "STA440", "ECO465"]; // choose 3 -> ELV001-003
-const DSA_ELECTIVE_GROUP_B = ["CS412", "CS414", "CS416", "CS418", "CS420", "BUS420", "FIN7430", "FIN7431"]; // choose 3 -> ELV004-006
+const DSA_ELECTIVE_GROUP_A = ["STA430", "STA432", "STA434", "STA436", "STA438", "STA440", "ECO465"];
+const DSA_ELECTIVE_GROUP_B = ["CS412", "CS414", "CS416", "CS418", "CS420", "BUS420", "FIN7430", "FIN7431"];
 
 const MATH_GENED_POOL = ["BUS101", "EDC101", "GEN206", "BIO100", "CHE100", "GEN203", "PHY100", "SOC101"];
 
@@ -440,8 +429,7 @@ const CSE_ADVICE = {
   CSE400C: "Requires CSE400B and is part 3 of the three-part capstone."
 };
 
-/* An elective slot: not a single fixed course, so it isn't a key into COURSES.
-   kind drives how openSlot() figures out what's eligible for it:
+/* An elective slot: not a single fixed course, format:
      "gen_ed"    -> pool is the program's generalEd list
      "major"     -> pool is the current major track (or all tracks combined)
      "nonmajor"  -> pool is every major-track course NOT in the current track

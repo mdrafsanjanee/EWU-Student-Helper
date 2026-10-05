@@ -35,7 +35,7 @@ function getPlannerData() {
   if (typeof PLANNER_DATA !== "undefined") return PLANNER_DATA;
   return window.PLANNER_DATA || {};
 }
-/* EWU offers some courses under a 4-digit "7xxx" code (e.g. ENG101 -> ENG7101). Treat both as the same course. */
+/* (ENG101 -> ENG7101). Treats both as the same course. */
 function codeVariants(code) {
   const m = String(code).toUpperCase().match(/^([A-Z]+)(\d+)([A-Z]?)$/);
   if (!m) return [code];

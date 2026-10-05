@@ -280,9 +280,8 @@
 /* Note: named .sem-course-list (not .course-list) on purpose — style.css already
    defines .course-list for the Course Planner page (height:0 + overflow:scroll,
    meant to live inside a flex column with a fixed height). Since this stylesheet
-   loads after style.css, it would win on the properties it sets, but height/overflow
-   go undeclared here and fall through — collapsing every semester's course list to
-   zero height. That's what was breaking the course/elective layout. */
+   loads after style.css
+*/
 .sem-course-list {
   padding: .7rem;
   display: flex;

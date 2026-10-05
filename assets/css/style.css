@@ -195,6 +195,21 @@ body {
     font-size: .86rem
 }
 
+/* Youtube iframe */
+.video-container {
+    width: 100%;
+    max-width: 900px;
+    aspect-ratio: 16 / 9;
+    margin: 20px auto;
+}
+
+.video-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 10px;
+}
+
 /* planner */
 .planner-toolbar {
     padding: 22px 24px;

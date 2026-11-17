@@ -47,7 +47,7 @@
   font-size: .78rem;
 }
 
-.course-list > .dept-block {
+.course-list>.dept-block {
   flex-shrink: 0;
 }
 
@@ -83,7 +83,7 @@ body.creative-theme .course-list .course-name {
   font-weight: 700;
 }
 
-body.creative-theme .course-list .course-head > span {
+body.creative-theme .course-list .course-head>span {
   color: #4b5563;
   font-weight: 800;
 }
@@ -113,4 +113,143 @@ body.creative-theme .course-chip.slot-chip {
 
 body.creative-theme .course-chip.not-offered:not(.active) {
   opacity: .55;
+}
+
+/* ---------- Sort / filter menu (next to "Recommended courses") ---------- */
+.recommended-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recommended-head .small-label {
+  margin-bottom: 0;
+}
+
+.recommended-head+.chip-row:not(:empty) {
+  margin-top: 10px;
+}
+
+.sort-menu {
+  position: relative;
+}
+
+.sort-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #d5d9de;
+  border-radius: 8px;
+  background: #fff;
+  color: #4b5563;
+  cursor: pointer;
+  transition: .15s;
+}
+
+.sort-btn:hover,
+.sort-btn[aria-expanded="true"] {
+  border-color: #f05f40;
+  color: #f05f40;
+  background: #fff5f2;
+}
+
+.sort-btn:focus-visible {
+  outline: 2px solid #f05f40;
+  outline-offset: 2px;
+}
+
+.sort-dot {
+  display: none;
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #f05f40;
+  border: 2px solid #fff;
+  box-sizing: content-box;
+}
+
+.sort-btn.active .sort-dot {
+  display: block;
+}
+
+.sort-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 30;
+  width: 236px;
+  max-width: calc(100vw - 48px);
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 12px 14px 10px;
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .14);
+}
+
+.sort-panel[hidden] {
+  display: none;
+}
+
+.sort-title {
+  font: 800 .78rem "Open Sans", Arial, sans-serif;
+  color: #212529;
+  margin-bottom: 8px;
+}
+
+.sort-group+.sort-group {
+  margin-top: 8px;
+}
+
+.sort-group-label {
+  font: 700 .66rem "Open Sans", Arial, sans-serif;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #777;
+  margin-bottom: 2px;
+}
+
+.sort-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: .8rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.sort-option input {
+  accent-color: #f05f40;
+  margin: 0;
+}
+
+.sort-reset {
+  margin-top: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #f05f40;
+  font-size: .78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.sort-reset:disabled {
+  color: #aaa;
+  cursor: default;
+}
+
+/* Dedicated-department tag in a section row */
+.dedicated-tag {
+  color: #f05f40;
+  font-weight: 800;
 }

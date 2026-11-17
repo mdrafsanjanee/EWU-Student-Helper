@@ -5,7 +5,8 @@ const state = {
   program: "cse",   // key into PROGRAMS (curriculum-data.js), same list as the CGPA calculator
   semester: 0,      // recommended semester number within the program (0 = none chosen)
   focus: "",        // key of the recommended chip currently shown in the list
-  picks: {}         // elective slot key -> chosen course code
+  picks: {},        // elective slot key -> chosen course code
+  sort: "default"   // section sort order, see SORT_OPTIONS
 };
 
 const DEPARTMENTS = [
@@ -84,8 +85,10 @@ async function parseOfferedCoursesPdf(file) {
     for (const rec of records) {
       codes.add(rec.code);
       const key = `${rec.code}::${rec.section}`;
-      if (!allSections.has(key)) allSections.set(key, { code: rec.code, section: rec.section, meetings: [] });
+      if (!allSections.has(key)) allSections.set(key, { code: rec.code, section: rec.section, meetings: [], enrolled: null, capacity: null, dedicated: "" });
       const s = allSections.get(key);
+      if (s.capacity == null && rec.capacity) { s.enrolled = rec.capacity.enrolled; s.capacity = rec.capacity.total; }
+      if (!s.dedicated && rec.dedicated) s.dedicated = rec.dedicated;
       if (!s.meetings.some(m => m.day === rec.meeting.day && m.start === rec.meeting.start && m.end === rec.meeting.end && m.room === rec.meeting.room)) s.meetings.push(rec.meeting);
     }
   }
@@ -103,11 +106,15 @@ function parseOfferedPage(items) {
   const sectionWords = words.filter(w => w.x >= 88 && w.x < 130);
   const timingWords = words.filter(w => w.x >= 130 && w.x < 225);
   const roomWords = words.filter(w => w.x >= 225 && w.x < 410);
+  const deptWords = words.filter(w => w.x >= 410 && w.x < 505);
+  const capacityWords = words.filter(w => w.x >= 505);
 
   const courseRows = clusterByY(courseWords, 2.5).map(r => ({ y: r.centerY, text: r.text }));
   const sectionRows = clusterByY(sectionWords, 2.5).map(r => ({ y: r.centerY, text: r.text }));
   const timingRows = clusterByY(timingWords, 2.5);
   const roomRows = clusterByY(roomWords, 2.5);
+  const deptRows = clusterByY(deptWords, 2.5);
+  const capacityRows = clusterByY(capacityWords, 2.5);
   const timingBlocks = [];
 
   for (let i = 0; i < timingRows.length; i++) {
@@ -139,7 +146,9 @@ function parseOfferedPage(items) {
     const section = sectionRow.text.replace(/\s+/g, "");
     if (!/^\d{1,3}$/.test(section)) continue;
     const room = nearestRoom(roomRows, block.y);
-    for (const day of block.days) records.push({ code, section, meeting: { day, start: block.start, end: block.end, room } });
+    const capacity = nearestCapacity(capacityRows, block.y);
+    const dedicated = nearestDedicated(deptRows, block.y);
+    for (const day of block.days) records.push({ code, section, capacity, dedicated, meeting: { day, start: block.start, end: block.end, room } });
   }
   return records;
 }
@@ -160,13 +169,25 @@ function nearestRow(rows, y, test) {
   return rows.filter(r => !test || test.test(r.text)).sort((a, b) => Math.abs(a.y - y) - Math.abs(b.y - y))[0] || null;
 }
 function nearestRoom(rows, y) {
-  const nearby = rows.filter(r => Math.abs(r.centerY - y) <= 11).sort((a, b) => Math.abs(a.centerY - y) - Math.abs(b.centerY - y));
+  // A long room name wraps onto two lines (also across a page break), so join every line around the block.
+  const nearby = rows.filter(r => Math.abs(r.centerY - y) <= 8).sort((a, b) => b.centerY - a.centerY);
   if (!nearby.length) return "Room TBA";
-  let text = nearby[0].text;
+  let text = nearby.map(r => r.text).join(" ");
   text = text.replace(/\b\d+\s*\/\s*\d+\s*$/, "").trim();
   // Capacity/dedicated-department text can occasionally sneak into the room span.
   text = text.replace(/\s+(?:CSE|EEE|ECE|ENG|MAT|PHY|LAW|MDS|ECO|BA|SOC|SR|GEB|IS|DSS|MBA)\s*$/i, "").trim();
   return text || "Room TBA";
+}
+/* "19 / 40" -> { enrolled: 19, total: 40 }. The capacity and dedicated-department columns sit on the same line as the course code. */
+function nearestCapacity(rows, y) {
+  const row = rows.filter(r => Math.abs(r.centerY - y) <= 8 && /^\d+\s*\/\s*\d+$/.test(r.text)).sort((a, b) => Math.abs(a.centerY - y) - Math.abs(b.centerY - y))[0];
+  if (!row) return null;
+  const [enrolled, total] = row.text.split("/").map(n => Number(n.trim()));
+  return { enrolled, total };
+}
+function nearestDedicated(rows, y) {
+  const row = rows.filter(r => Math.abs(r.centerY - y) <= 8).sort((a, b) => Math.abs(a.centerY - y) - Math.abs(b.centerY - y))[0];
+  return row ? row.text.trim() : "";
 }
 function normalizeCourseCode(code) { return String(code).replace(/_/g, "").toUpperCase(); }
 function inferDepartment(fileName, codes) {
@@ -289,9 +310,8 @@ function recommendedEntries() {
 }
 function recommendedEntry(key) { return recommendedEntries().find(e => e.key === key); }
 function renderRecommendedChips() {
-  const wrap = $("recommendedWrap");
   const entries = recommendedEntries();
-  wrap.classList.toggle("d-none", !entries.length);
+  $("recommendedLabel").classList.toggle("d-none", !entries.length);
   if (!entries.length) { $("recommendedChips").innerHTML = ""; return; }
   const idx = sectionIndex();
   $("recommendedChips").innerHTML = entries.map(e => {
@@ -315,7 +335,7 @@ function renderCourseBlock(code, sections, opts = {}) {
   const selected = state.selected.find(sel => sections.some(s => s.code === sel.code));
   const credit = plannerCredit(code);
   const body = sections.length
-    ? `<div class="section-stack">${sections.map(s => renderSection(s, selected)).join("")}</div>`
+    ? `<div class="section-stack">${sortSections(sections).map(s => renderSection(s, selected)).join("")}</div>`
     : `<div class="course-note">${state.imported.length ? "Not offered in the imported PDFs." : "Import the offered-courses PDF to see sections."}</div>`;
   return `<section class="course-block"><header class="course-head"><div>${opts.kicker ? `<div class="dept-kicker">${esc(opts.kicker)}</div>` : ""}<div class="course-code-head">${esc(shownCode)}</div><div class="course-name">${esc(plannerMeta(code))}</div></div><span>${credit == null ? "Credit —" : `${trimNumber(credit)} cr`}</span></header>${opts.extra || ""}${body}</section>`;
 }
@@ -335,14 +355,55 @@ function renderSlotBlock(slot, semNo, idx) {
     : `<div class="course-note">No fixed list for this slot. Search for the course code above.</div>`;
   return `<section class="course-block slot-block"><header class="course-head"><div><div class="dept-kicker">ELECTIVE</div><div class="course-code-head">${esc(slot.code)}</div><div class="course-name">${esc(slot.label)}</div></div><span>${esc(slot.credits)} cr</span></header><div class="slot-body"><div class="course-note">${esc(slot.hint)}</div>${picker}</div></section>`;
 }
+/* ---------- Sort / filter ---------- */
+const SORT_GROUPS = [
+  { label: "Time", options: [["time-asc", "Earliest start first"], ["time-desc", "Latest start first"]] },
+  { label: "Date", options: [["date-asc", "Earliest day first"], ["date-desc", "Latest day first"]] },
+  { label: "Capacity", options: [["cap-desc", "Most seats left"], ["cap-asc", "Fewest seats left"]] }
+];
+const SORT_KEYS = new Set(["default", ...SORT_GROUPS.flatMap(g => g.options.map(o => o[0]))]);
+function firstStart(s) { return Math.min(...s.meetings.map(m => m.start)); }
+function firstDay(s) { return Math.min(...s.meetings.map(m => DAY_ORDER[m.day] ?? 99)); }
+function seatsLeft(s) { return s.capacity == null ? null : s.capacity - s.enrolled; }
+function sortSections(sections) {
+  const mode = state.sort;
+  if (!mode || mode === "default") return sections;
+  const dir = mode.endsWith("-desc") ? -1 : 1;
+  const secNo = s => Number(s.section) || 0;
+  const byNo = (a, b) => secNo(a) - secNo(b);
+  return [...sections].sort((a, b) => {
+    if (mode.startsWith("time")) return dir * (firstStart(a) - firstStart(b)) || firstDay(a) - firstDay(b) || byNo(a, b);
+    if (mode.startsWith("date")) return dir * (firstDay(a) - firstDay(b)) || firstStart(a) - firstStart(b) || byNo(a, b);
+    const la = seatsLeft(a), lb = seatsLeft(b);
+    if (la == null || lb == null) return (la == null) - (lb == null) || byNo(a, b); // sections without capacity data go last
+    return (mode === "cap-desc" ? lb - la : la - lb) || byNo(a, b); // cap-desc = most seats left first
+  });
+}
+function renderSortPanel() {
+  const radio = ([key, label]) => `<label class="sort-option"><input type="radio" name="sectionSort" value="${key}" ${state.sort === key ? "checked" : ""}><span>${esc(label)}</span></label>`;
+  $("sortPanel").innerHTML = `<div class="sort-title">Sort sections by</div>${SORT_GROUPS.map(g => `<div class="sort-group"><div class="sort-group-label">${esc(g.label)}</div>${g.options.map(radio).join("")}</div>`).join("")}<button type="button" class="sort-reset" data-sort-reset ${state.sort === "default" ? "disabled" : ""}>Reset</button>`;
+  $("sortBtn").classList.toggle("active", state.sort !== "default");
+}
+function setSortOpen(open) {
+  $("sortPanel").hidden = !open;
+  $("sortBtn").setAttribute("aria-expanded", String(open));
+}
+function setSort(mode) {
+  state.sort = SORT_KEYS.has(mode) ? mode : "default";
+  renderSortPanel(); renderCourseList();
+}
+
+const DAY_CODE = Object.fromEntries(Object.entries(DAY_MAP).map(([code, day]) => [day, code])); // Sunday -> S ... Thursday -> R, Saturday -> A
 function renderSection(s, selected) {
   const selectedHere = selected?.section === s.section && selected?.code === s.code && (selected.department == null || selected.department === s.department);
   const locked = !!selected && !selectedHere;
-  const dayText = s.meetings.map(m => m.day.slice(0, 1)).join("/");
+  const dayText = s.meetings.map(m => DAY_CODE[m.day] || m.day.slice(0, 1)).join("/");
   const timeText = [...new Set(s.meetings.map(m => `${formatTime(m.start)}–${formatTime(m.end)}`))].join(" / ");
   const roomText = [...new Set(s.meetings.map(m => m.room).filter(Boolean))].join(" / ") || "Room TBA";
+  const capacityText = s.capacity == null ? "—" : `${s.enrolled} / ${s.capacity}`;
+  const dedicatedText = s.dedicated ? `${s.dedicated} Dept. Only` : "";
   const payload = JSON.stringify(s).replace(/</g, "\\u003c");
-  return `<button type="button" class="section-row ${selectedHere ? "selected" : ""}" ${locked ? "disabled" : ""} data-add-section='${esc(payload)}'><div class="section-info"><strong>Section ${esc(s.section)}</strong><div class="section-facts"><span>Room: ${esc(roomText)}</span><span>Date: ${esc(dayText)}</span><span>Time: ${esc(timeText)}</span></div></div><span class="section-action">${selectedHere ? "Selected" : locked ? "Another section selected" : "Add"}</span></button>`;
+  return `<button type="button" class="section-row ${selectedHere ? "selected" : ""}" ${locked ? "disabled" : ""} data-add-section='${esc(payload)}'><div class="section-info"><strong>Section ${esc(s.section)}</strong><div class="section-facts"><span>Capacity: ${esc(capacityText)}</span>${dedicatedText ? `<span class="dedicated-tag">${esc(dedicatedText)}</span>` : ""}<span>Room: ${esc(roomText)}</span><span>Date: ${esc(dayText)}</span><span>Time: ${esc(timeText)}</span></div></div><span class="section-action">${selectedHere ? "Selected" : locked ? "Another section selected" : "Add"}</span></button>`;
 }
 function addSection(section) {
   const code = section.code;
@@ -414,6 +475,11 @@ $("sectionPdfInput").addEventListener("change", async e => {
   else showStatus($("plannerStatus"), `Imported ${files.length} department file${files.length > 1 ? "s" : ""}.`, "success");
 });
 $("courseSearch").addEventListener("input", renderCourseList);
+$("sortBtn").addEventListener("click", () => setSortOpen($("sortPanel").hidden));
+$("sortPanel").addEventListener("change", e => { if (e.target.name === "sectionSort") setSort(e.target.value); });
+$("sortPanel").addEventListener("click", e => { if (e.target.closest("[data-sort-reset]")) setSort("default"); });
+document.addEventListener("click", e => { if (!$("sortPanel").hidden && !e.target.closest(".sort-menu")) setSortOpen(false); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("sortPanel").hidden) { setSortOpen(false); $("sortBtn").focus(); } });
 $("programSelect").addEventListener("change", () => {
   state.program = $("programSelect").value;
   state.semester = 0;
@@ -450,4 +516,4 @@ $("courseList").addEventListener("change", e => {
 $("planName").addEventListener("input", () => { $("planNameCount").textContent = $("planName").value.length; });
 $("plannerExport").addEventListener("click", exportPlannerRoutine);
 
-renderProgramControls(); renderImported(); renderCourseList(); renderSelected();
+renderProgramControls(); renderSortPanel(); renderImported(); renderCourseList(); renderSelected();

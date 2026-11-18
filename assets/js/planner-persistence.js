@@ -33,7 +33,7 @@
       if (typeof saved.program === "string" && PROGRAMS[saved.program]) state.program = saved.program;
       state.semester = Number(saved.semester) || 0;
       state.picks = saved.picks && typeof saved.picks === "object" ? saved.picks : {};
-      state.sort = SORT_KEYS.has(saved.sort) ? saved.sort : "default";
+      state.sort = cleanSort(saved.sort); // also reads the old single-string format
       state.wanted = Array.isArray(saved.wanted) ? saved.wanted.filter(c => typeof c === "string").slice(0, 6) : [];
       if (SUGGEST_WEIGHTS[saved.suggestPrio]) state.suggestPrio = saved.suggestPrio;
 

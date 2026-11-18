@@ -6,7 +6,7 @@ const state = {
   semester: 0,      // recommended semester number within the program (0 = none chosen)
   focus: "",        // key of the recommended chip currently shown in the list
   picks: {},        // elective slot key -> chosen course code
-  sort: "default"   // section sort order, see SORT_OPTIONS
+  sort: []          // section sort criteria, in priority order (first ticked = main), see SORT_GROUPS
 };
 
 const DEPARTMENTS = [
@@ -356,42 +356,65 @@ function renderSlotBlock(slot, semNo, idx) {
   return `<section class="course-block slot-block"><header class="course-head"><div><div class="dept-kicker">ELECTIVE</div><div class="course-code-head">${esc(slot.code)}</div><div class="course-name">${esc(slot.label)}</div></div><span>${esc(slot.credits)} cr</span></header><div class="slot-body"><div class="course-note">${esc(slot.hint)}</div>${picker}</div></section>`;
 }
 /* ---------- Sort / filter ---------- */
+/* Tick several options: the first one ticked is the main order, later ones break ties.
+   A group has two opposite choices (earliest / latest), so ticking one clears the other. */
 const SORT_GROUPS = [
-  { label: "Time", options: [["time-asc", "Earliest start first"], ["time-desc", "Latest start first"]] },
-  { label: "Date", options: [["date-asc", "Earliest day first"], ["date-desc", "Latest day first"]] },
-  { label: "Capacity", options: [["cap-desc", "Most seats left"], ["cap-asc", "Fewest seats left"]] }
+  { id: "time", label: "Time", options: [["time-asc", "Earliest start first"], ["time-desc", "Latest start first"]] },
+  { id: "date", label: "Date", options: [["date-asc", "Earliest day first"], ["date-desc", "Latest day first"]] },
+  { id: "cap", label: "Capacity", options: [["cap-desc", "Most seats left"], ["cap-asc", "Fewest seats left"]] }
 ];
-const SORT_KEYS = new Set(["default", ...SORT_GROUPS.flatMap(g => g.options.map(o => o[0]))]);
+const SORT_KEYS = new Set(SORT_GROUPS.flatMap(g => g.options.map(o => o[0])));
+function cleanSort(value) {
+  const list = Array.isArray(value) ? value : (typeof value === "string" ? [value] : []);
+  const out = [];
+  for (const key of list) if (SORT_KEYS.has(key) && !out.some(k => k.split("-")[0] === key.split("-")[0])) out.push(key);
+  return out;
+}
 function firstStart(s) { return Math.min(...s.meetings.map(m => m.start)); }
 function firstDay(s) { return Math.min(...s.meetings.map(m => DAY_ORDER[m.day] ?? 99)); }
 function seatsLeft(s) { return s.capacity == null ? null : s.capacity - s.enrolled; }
+function compareBy(key, a, b) {
+  const dir = key.endsWith("-desc") ? -1 : 1;
+  if (key.startsWith("time")) return dir * (firstStart(a) - firstStart(b));
+  if (key.startsWith("date")) return dir * (firstDay(a) - firstDay(b));
+  const la = seatsLeft(a), lb = seatsLeft(b);
+  if (la == null || lb == null) return (la == null) - (lb == null); // sections without capacity data go last
+  return key === "cap-desc" ? lb - la : la - lb;                    // cap-desc = most seats left first
+}
 function sortSections(sections) {
-  const mode = state.sort;
-  if (!mode || mode === "default") return sections;
-  const dir = mode.endsWith("-desc") ? -1 : 1;
+  const keys = state.sort;
+  if (!keys || !keys.length) return sections;
   const secNo = s => Number(s.section) || 0;
-  const byNo = (a, b) => secNo(a) - secNo(b);
   return [...sections].sort((a, b) => {
-    if (mode.startsWith("time")) return dir * (firstStart(a) - firstStart(b)) || firstDay(a) - firstDay(b) || byNo(a, b);
-    if (mode.startsWith("date")) return dir * (firstDay(a) - firstDay(b)) || firstStart(a) - firstStart(b) || byNo(a, b);
-    const la = seatsLeft(a), lb = seatsLeft(b);
-    if (la == null || lb == null) return (la == null) - (lb == null) || byNo(a, b); // sections without capacity data go last
-    return (mode === "cap-desc" ? lb - la : la - lb) || byNo(a, b); // cap-desc = most seats left first
+    for (const key of keys) { const d = compareBy(key, a, b); if (d) return d; }
+    return secNo(a) - secNo(b);
   });
 }
 function renderSortPanel() {
-  const radio = ([key, label]) => `<label class="sort-option"><input type="radio" name="sectionSort" value="${key}" ${state.sort === key ? "checked" : ""}><span>${esc(label)}</span></label>`;
-  $("sortPanel").innerHTML = `<div class="sort-title">Sort sections by</div>${SORT_GROUPS.map(g => `<div class="sort-group"><div class="sort-group-label">${esc(g.label)}</div>${g.options.map(radio).join("")}</div>`).join("")}<button type="button" class="sort-reset" data-sort-reset ${state.sort === "default" ? "disabled" : ""}>Reset</button>`;
-  $("sortBtn").classList.toggle("active", state.sort !== "default");
+  const row = ([key, label]) => {
+    const rank = state.sort.indexOf(key) + 1;
+    return `<label class="sort-option"><input type="checkbox" value="${key}" ${rank ? "checked" : ""}><span>${esc(label)}</span>${rank && state.sort.length > 1 ? `<b class="sort-rank" title="Priority ${rank}">${rank}</b>` : ""}</label>`;
+  };
+  $("sortPanel").innerHTML = `<div class="sort-title">Sort sections by</div><div class="sort-hint">Tick more than one. The first you tick is the main order.</div>${SORT_GROUPS.map(g => `<div class="sort-group"><div class="sort-group-label">${esc(g.label)}</div>${g.options.map(row).join("")}</div>`).join("")}<button type="button" class="sort-reset" data-sort-reset ${state.sort.length ? "" : "disabled"}>Clear all</button>`;
+  const btn = $("sortBtn");
+  btn.classList.toggle("active", state.sort.length > 0);
+  btn.dataset.count = state.sort.length > 1 ? String(state.sort.length) : "";
 }
 function setSortOpen(open) {
   $("sortPanel").hidden = !open;
   $("sortBtn").setAttribute("aria-expanded", String(open));
 }
-function setSort(mode) {
-  state.sort = SORT_KEYS.has(mode) ? mode : "default";
+function toggleSort(key, on) {
+  const group = key.split("-")[0];
+  const rest = state.sort.filter(k => k.split("-")[0] !== group); // drop the opposite choice of the same group
+  const was = state.sort.indexOf(key);
+  if (on) { // keep the group's old rank when flipping earliest <-> latest, otherwise add at the end
+    const old = state.sort.findIndex(k => k.split("-")[0] === group);
+    state.sort = old >= 0 ? state.sort.map(k => k.split("-")[0] === group ? key : k) : [...rest, key];
+  } else if (was >= 0) state.sort = rest;
   renderSortPanel(); renderCourseList();
 }
+function clearSort() { state.sort = []; renderSortPanel(); renderCourseList(); }
 
 const DAY_CODE = Object.fromEntries(Object.entries(DAY_MAP).map(([code, day]) => [day, code])); // Sunday -> S ... Thursday -> R, Saturday -> A
 function renderSection(s, selected) {
@@ -476,8 +499,8 @@ $("sectionPdfInput").addEventListener("change", async e => {
 });
 $("courseSearch").addEventListener("input", renderCourseList);
 $("sortBtn").addEventListener("click", () => setSortOpen($("sortPanel").hidden));
-$("sortPanel").addEventListener("change", e => { if (e.target.name === "sectionSort") setSort(e.target.value); });
-$("sortPanel").addEventListener("click", e => { if (e.target.closest("[data-sort-reset]")) setSort("default"); });
+$("sortPanel").addEventListener("change", e => { if (e.target.matches('input[type="checkbox"]')) toggleSort(e.target.value, e.target.checked); });
+$("sortPanel").addEventListener("click", e => { if (e.target.closest("[data-sort-reset]")) clearSort(); });
 document.addEventListener("click", e => { if (!$("sortPanel").hidden && !e.target.closest(".sort-menu")) setSortOpen(false); });
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("sortPanel").hidden) { setSortOpen(false); $("sortBtn").focus(); } });
 $("programSelect").addEventListener("change", () => {
@@ -517,3 +540,44 @@ $("planName").addEventListener("input", () => { $("planNameCount").textContent =
 $("plannerExport").addEventListener("click", exportPlannerRoutine);
 
 renderProgramControls(); renderSortPanel(); renderImported(); renderCourseList(); renderSelected();
+
+/* The course list fills the window but never gets shorter than 4 section rows.
+   Rows wrap onto more lines on narrow screens, so measure the 4 tallest rows plus the headers
+   instead of guessing (CSS has a fallback: --list-min), and tell the CSS how tall the header above the list is. */
+(function syncCoursesLayout() {
+  const panel = document.querySelector(".planner-courses"), list = $("courseList");
+  if (!panel || !list) return;
+  const h = el => (el ? el.getBoundingClientRect().height : 0);
+  const syncHead = () => panel.style.setProperty("--courses-head-h", `${Math.round(list.getBoundingClientRect().top - panel.getBoundingClientRect().top)}px`);
+  const syncMin = () => {
+    const rows = [...list.querySelectorAll(".section-row")].map(h).sort((a, b) => b - a);
+    if (!rows.length) return panel.style.removeProperty("--list-min");
+    while (rows.length < 4) rows.push(rows[0]);
+    const chrome = h(list.querySelector(".dept-head")) + h(list.querySelector(".course-head")) + 16;
+    panel.style.setProperty("--list-min", `${Math.ceil(rows.slice(0, 4).reduce((a, b) => a + b, 0) + chrome)}px`);
+  };
+  const sync = () => { syncMin(); syncHead(); };
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(syncHead);
+    [...panel.children].filter(el => el !== list).forEach(el => ro.observe(el));
+  }
+  new MutationObserver(syncMin).observe(list, { childList: true, subtree: true });
+  window.addEventListener("resize", sync);
+  sync();
+})();
+
+/* Wheel over an inner scroll area scrolls that area first. Once it is at the top/bottom (or has nothing to scroll),
+   the page scrolls instead, so nobody gets stuck inside a list. */
+(function chainWheelToPage() {
+  const handler = e => {
+    const el = e.currentTarget;
+    if (e.ctrlKey || e.defaultPrevented || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+    const max = el.scrollHeight - el.clientHeight;
+    const atEnd = max <= 1 || (e.deltaY < 0 && el.scrollTop <= 0) || (e.deltaY > 0 && el.scrollTop >= max - 1);
+    if (!atEnd) return;
+    e.preventDefault();
+    const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1;
+    window.scrollBy({ top: e.deltaY * unit, left: 0, behavior: "instant" }); // instant: the page may have CSS smooth scrolling, which would lag behind the wheel
+  };
+  ["courseList", "selectedList", "smartSuggest", "sortPanel"].forEach(id => { const el = $(id); if (el) el.addEventListener("wheel", handler, { passive: false }); });
+})();

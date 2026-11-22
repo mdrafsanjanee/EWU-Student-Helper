@@ -1,6 +1,6 @@
 /* Keep planner imports/selections while this browser tab remains open. */
 (() => {
-  const KEY = "ewuPlannerStateV1";
+  const KEY = "ewuPlannerStateV2";
 
   function save() {
     try {

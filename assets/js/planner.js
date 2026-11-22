@@ -70,7 +70,7 @@ async function importDepartmentPDF(file) {
   if (!window.pdfjsLib) throw new Error("PDF support could not load.");
   const parsed = await parseOfferedCoursesPdf(file);
   const dept = inferDepartment(file.name, parsed.codes);
-  return { department: dept.code, departmentName: dept.name, fileName: file.name, sections: parsed.sections };
+  return { department: dept.code, departmentName: dept.name, fileName: file.name, sections: parsed.sections, rowsExpected: parsed.rowsExpected, rowsParsed: parsed.rowsParsed };
 }
 
 async function parseOfferedCoursesPdf(file) {
@@ -78,10 +78,19 @@ async function parseOfferedCoursesPdf(file) {
   const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(buffer) }).promise;
   const allSections = new Map();
   const codes = new Set();
+  let rowsExpected = 0, rowsParsed = 0;
   for (let pageNo = 1; pageNo <= pdf.numPages; pageNo++) {
     const page = await pdf.getPage(pageNo);
-    const content = await page.getTextContent();
-    const records = parseOfferedPage(content.items);
+    let records = parseOfferedPage((await page.getTextContent()).items);
+    if (records.rowsParsed < records.rowsExpected) {
+      // Some print layouts make pdf.js fuse neighbouring cells into one text run; re-read the page with the runs kept apart.
+      try {
+        const alt = parseOfferedPage((await page.getTextContent({ disableCombineTextItems: true })).items);
+        if (alt.rowsParsed > records.rowsParsed) records = alt;
+      } catch (err) { console.warn("Second read of page failed.", err); }
+    }
+    rowsExpected += records.rowsExpected;
+    rowsParsed += records.rowsParsed;
     for (const rec of records) {
       codes.add(rec.code);
       const key = `${rec.code}::${rec.section}`;
@@ -94,40 +103,93 @@ async function parseOfferedCoursesPdf(file) {
   }
   const sections = [...allSections.values()].filter(s => s.meetings.length);
   if (!sections.length) throw new Error("No offered course sections were detected in this department PDF.");
-  return { sections, codes: [...codes] };
+  return { sections, codes: [...codes], rowsExpected, rowsParsed };
+}
+
+/* Very narrow print layouts can make the PDF emit the course and section cells as ONE text run with no gap ("MATH1121" = MATH112 + section 1).
+   Split such runs: usually only one split gives a valid code (3-5 digits) + section (1-3 digits); otherwise the run's width tells where the section starts. */
+function splitFusedCourseCells(words) {
+  const FUSED = /^([A-Z]{2,8}_?)(\d{3,8})([A-Z]?)(\d{0,3})$/i;
+  const candidates = word => {
+    const m = word.text.match(FUSED);
+    if (!m || word.w <= 0) return null;
+    const [, letters, digits, suffix, tail] = m;
+    const out = [];
+    if (suffix && tail) return digits.length <= 5 ? { out: [letters.length + digits.length + 1] } : null; // "CSE400A1": the letter marks the split
+    if (suffix || tail) return null; // a plain code like "CSE110A" with the section elsewhere
+    for (let n = 3; n <= 5; n++) if (digits.length - n >= 1 && digits.length - n <= 3) out.push(letters.length + n);
+    return out.length && digits.length >= 4 ? { out } : null;
+  };
+  const timingXs = words.filter(w => /^[SMTWRFA]{1,7}\s+\d{1,2}:\d{2}\s*(?:AM|PM)\b/i.test(w.text)).map(w => w.x);
+  const timingLeft = timingXs.length ? Math.min(...timingXs) : Infinity;
+  // Only a run whose row has no separate section cell can be fused ("CHE7107" with its own "1" beside it is just a 4-digit code).
+  const hasOwnSection = w => words.some(o => o !== w && /^\d{1,3}$/.test(o.text) && Math.abs(o.y - w.y) <= 3 && o.x > w.x + 5 && o.x < timingLeft - 5);
+  const fused = words.map(w => ({ w, c: candidates(w) })).filter(x => x.c && !hasOwnSection(x.w));
+  if (!fused.length) return words;
+  // The real section column (when other rows on the page keep it separate), so that an ambiguous run can be split where that column starts.
+  const courseXs = words.filter(w => /^[A-Z]{2,8}_?\d{3,5}[A-Z]?$/i.test(w.text)).map(w => w.x);
+  const loose = words.filter(w => /^\d{1,3}$/.test(w.text) && timingXs.length && courseXs.length && w.x > Math.min(...courseXs) + 5 && w.x < Math.min(...timingXs) - 5).map(w => w.x);
+  const sectionX = loose.length ? loose.sort((a, b) => a - b)[Math.floor(loose.length / 2)] : null;
+  const result = words.filter(w => !fused.some(f => f.w === w));
+  const parts = [];
+  for (const { w, c } of fused) {
+    const wantFrac = sectionX == null ? null : (sectionX - w.x) / w.w;
+    const k = c.out.length === 1 || wantFrac == null
+      ? c.out[0]
+      : c.out.sort((a, b) => Math.abs(a / w.text.length - wantFrac) - Math.abs(b / w.text.length - wantFrac))[0];
+    parts.push({ w, k, est: w.x + w.w * k / w.text.length });
+  }
+  const snapX = sectionX != null ? sectionX : parts.map(p => p.est).sort((a, b) => a - b)[Math.floor(parts.length / 2)];
+  for (const { w, k } of parts) {
+    const code = w.text.slice(0, k), section = w.text.slice(k);
+    result.push({ text: code, x: w.x, y: w.y, w: w.w * k / w.text.length }, { text: section, x: snapX, y: w.y, w: w.w * (w.text.length - k) / w.text.length });
+  }
+  return result;
 }
 
 function parseOfferedPage(items) {
-  const words = items.filter(i => String(i.str || "").trim()).map(i => ({
-    text: String(i.str).trim(), x: Number(i.transform?.[4] || 0), y: Number(i.transform?.[5] || 0)
-  }));
+  const words = splitFusedCourseCells(items.filter(i => String(i.str || "").trim()).map(i => ({
+    text: String(i.str).trim(), x: Number(i.transform?.[4] || 0), y: Number(i.transform?.[5] || 0), w: Number(i.width || 0)
+  })));
 
-  const courseWords = words.filter(w => w.x < 90);
-  const sectionWords = words.filter(w => w.x >= 88 && w.x < 130);
-  const timingWords = words.filter(w => w.x >= 130 && w.x < 225);
-  const roomWords = words.filter(w => w.x >= 225 && w.x < 410);
-  const deptWords = words.filter(w => w.x >= 410 && w.x < 505);
-  const capacityWords = words.filter(w => w.x >= 505);
+  const L = detectPageLayout(words);
+  const courseWords = words.filter(w => w.x < L.sectionX);
+  const sectionWords = words.filter(w => w.x >= L.sectionX && w.x < L.timingX);
+  const timingWords = words.filter(w => w.x >= L.timingX && w.x < L.roomX);
+  const roomWords = words.filter(w => w.x >= L.roomX && w.x < L.deptX);
+  const deptWords = words.filter(w => w.x >= L.deptX && w.x < L.capX);
+  const capacityWords = words.filter(w => w.x >= L.capX);
 
-  const courseRows = clusterByY(courseWords, 2.5).map(r => ({ y: r.centerY, text: r.text }));
-  const sectionRows = clusterByY(sectionWords, 2.5).map(r => ({ y: r.centerY, text: r.text }));
-  const timingRows = clusterByY(timingWords, 2.5);
-  const roomRows = clusterByY(roomWords, 2.5);
-  const deptRows = clusterByY(deptWords, 2.5);
-  const capacityRows = clusterByY(capacityWords, 2.5);
+  const courseRows = clusterByY(courseWords, L.yTol).map(r => ({ y: r.centerY, text: r.text }));
+  const sectionRows = clusterByY(sectionWords, L.yTol).map(r => ({ y: r.centerY, text: r.text }));
+  // In narrow layouts the PDF can fuse the two cells into one text run ("CHE7107 1"): read the section from it.
+  for (const row of courseRows) {
+    const fused = row.text.match(/^[A-Z]{2,8}_?\d{3,5}[A-Z]?\s+(\d{1,3})$/i);
+    if (fused) sectionRows.push({ y: row.y, text: fused[1] });
+  }
+  const timingRows = clusterByY(timingWords, L.yTol);
+  const roomRows = clusterByY(roomWords, L.yTol);
+  const deptRows = clusterByY(deptWords, L.yTol);
+  const capacityRows = clusterByY(capacityWords, L.yTol);
   const timingBlocks = [];
 
+  // A timing cell can wrap onto 2-3 lines at any point: "MW 01:30 PM - 03:00" + "PM", "SR 11:50 AM -" + "01:20 PM", etc.
+  // Start a block at every "<days> <time>" line, then glue on the continuation lines until it forms a full range.
+  const TIMING_START = /^[SMTWRFA]{1,7}\s+\d{1,2}:\d{2}\s*(?:AM|PM)\b/i;
+  const TIMING_FULL = /^([SMTWRFA]{1,7})\s+(\d{1,2}:\d{2}\s*(?:AM|PM))\s*-\s*(\d{1,2}:\d{2}\s*(?:AM|PM))$/i;
   for (let i = 0; i < timingRows.length; i++) {
-    const a = timingRows[i].text;
-    const start = a.match(/^([SMTWRFA]{1,7})\s+(\d{1,2}:\d{2}\s*(?:AM|PM))\s*-\s*$/i) || a.match(/^([SMTWRFA]{1,7})\s+(\d{1,2}:\d{2}\s*(?:AM|PM))\s*-\s*(\d{1,2}:\d{2}\s*(?:AM|PM))$/i);
-    if (!start) continue;
-    let endClock = start[3] || null;
-    let blockY = timingRows[i].centerY;
-    if (!endClock && timingRows[i + 1]) {
-      const end = timingRows[i + 1].text.match(/^(\d{1,2}:\d{2}\s*(?:AM|PM))$/i);
-      if (end) { endClock = end[1]; blockY = (timingRows[i].centerY + timingRows[i + 1].centerY) / 2; i++; }
+    if (!TIMING_START.test(timingRows[i].text)) continue;
+    let text = timingRows[i].text;
+    let last = i;
+    while (!TIMING_FULL.test(text) && last + 1 < timingRows.length && last - i < 2 && !TIMING_START.test(timingRows[last + 1].text)) {
+      last++;
+      text = `${text} ${timingRows[last].text}`.replace(/\s+/g, " ").trim();
     }
-    if (!endClock) continue;
+    const start = text.match(TIMING_FULL);
+    if (!start) continue;
+    const endClock = start[3];
+    const blockY = (timingRows[i].centerY + timingRows[last].centerY) / 2;
+    i = last;
     const startMin = toMinutes(start[2]);
     const endMin = toMinutes(endClock);
     if (endMin <= startMin) continue;
@@ -137,6 +199,7 @@ function parseOfferedPage(items) {
   }
 
   const records = [];
+  let rowsParsed = 0;
   for (const block of timingBlocks) {
     const course = nearestRow(courseRows, block.y, /\b[A-Z]{2,8}_?\d{3,5}[A-Z]?\b/i);
     if (!course) continue;
@@ -145,12 +208,50 @@ function parseOfferedPage(items) {
     if (!sectionRow) continue;
     const section = sectionRow.text.replace(/\s+/g, "");
     if (!/^\d{1,3}$/.test(section)) continue;
-    const room = nearestRoom(roomRows, block.y);
-    const capacity = nearestCapacity(capacityRows, block.y);
-    const dedicated = nearestDedicated(deptRows, block.y);
+    const room = nearestRoom(roomRows, block.y, L.rowTol);
+    const capacity = nearestCapacity(capacityRows, block.y, L.rowTol);
+    const dedicated = nearestDedicated(deptRows, block.y, L.rowTol);
+    rowsParsed++;
     for (const day of block.days) records.push({ code, section, capacity, dedicated, meeting: { day, start: block.start, end: block.end, room } });
   }
+  // Every table row has exactly one "x / y" capacity cell, so it tells us how many rows this page really holds.
+  const capCells = capacityWords.filter(w => /^\d+\s*\/\s*\d+$/.test(w.text));
+  const capColX = capCells.length ? Math.min(...capCells.map(w => w.x)) : 0; // a page-number footer such as "3/11" sits further right
+  records.rowsExpected = new Set(capCells.filter(w => w.x - capColX <= 6).map(w => Math.round(w.y))).size;
+  records.rowsParsed = rowsParsed;
   return records;
+}
+
+/* The portal's "Print" PDF changes with paper size, orientation and print scale, so column positions are read from the page itself:
+   every column's text is left-aligned, so the most common x of a recognisable cell type is that column's left edge. */
+const DEFAULT_LAYOUT = { sectionX: 88, timingX: 130, roomX: 225, deptX: 410, capX: 505, yTol: 2.5, rowTol: 8 };
+function detectPageLayout(words) {
+  const mode = xs => {
+    if (!xs.length) return null;
+    const buckets = new Map();
+    xs.forEach(x => { const k = Math.round(x / 2); (buckets.get(k) || buckets.set(k, []).get(k)).push(x); });
+    const best = [...buckets.values()].sort((a, b) => b.length - a.length || Math.min(...a) - Math.min(...b))[0];
+    return Math.min(...best);
+  };
+  const cap = words.filter(w => /^\d+\s*\/\s*\d+$/.test(w.text));
+  const capX = mode(cap.map(w => w.x));
+  const timingX = mode(words.filter(w => /^[SMTWRFA]{1,7}\s+\d{1,2}:\d{2}\s*(?:AM|PM)\b/i.test(w.text)).map(w => w.x));
+  const courseX = mode(words.filter(w => /^[A-Z]{2,8}_?\d{3,5}[A-Z]?(?:\s+\d{1,3})?$/i.test(w.text)).map(w => w.x));
+  if (capX == null || timingX == null || courseX == null) return DEFAULT_LAYOUT;
+  // If every section is fused into the course cell there is no separate section column on this page.
+  const sectionX = mode(words.filter(w => /^\d{1,3}$/.test(w.text) && w.x > courseX + 5 && w.x < timingX - 5).map(w => w.x)) ?? (courseX + timingX) / 2;
+  const roomX = mode(words.filter(w => w.x > timingX + 5 && w.x < capX - 5 && !/^(?:AM|PM)$/i.test(w.text)).map(w => w.x));
+  if (roomX == null || !(courseX < sectionX && sectionX < timingX && timingX < roomX && roomX < capX)) return DEFAULT_LAYOUT;
+  // Vertical tolerances scale with the row height (smallest gap between two table rows).
+  const ys = [...new Set(cap.map(w => Math.round(w.y * 10) / 10))].sort((a, b) => b - a);
+  let pitch = Infinity;
+  for (let i = 1; i < ys.length; i++) { const d = ys[i - 1] - ys[i]; if (d > 1) pitch = Math.min(pitch, d); }
+  const scale = Number.isFinite(pitch) ? Math.min(Math.max(pitch / 18, 0.4), 3) : 1;
+  return {
+    sectionX: sectionX - 3, timingX: timingX - 3, roomX: roomX - 3,
+    deptX: roomX + 0.5 * (capX - roomX), capX: capX - 4,
+    yTol: DEFAULT_LAYOUT.yTol * scale, rowTol: DEFAULT_LAYOUT.rowTol * scale
+  };
 }
 
 function clusterByY(words, tolerance) {
@@ -168,25 +269,25 @@ function clusterByY(words, tolerance) {
 function nearestRow(rows, y, test) {
   return rows.filter(r => !test || test.test(r.text)).sort((a, b) => Math.abs(a.y - y) - Math.abs(b.y - y))[0] || null;
 }
-function nearestRoom(rows, y) {
+function nearestRoom(rows, y, tol = 8) {
   // A long room name wraps onto two lines (also across a page break), so join every line around the block.
-  const nearby = rows.filter(r => Math.abs(r.centerY - y) <= 8).sort((a, b) => b.centerY - a.centerY);
+  const nearby = rows.filter(r => Math.abs(r.centerY - y) <= tol).sort((a, b) => b.centerY - a.centerY);
   if (!nearby.length) return "Room TBA";
-  let text = nearby.map(r => r.text).join(" ");
+  let text = nearby.map(r => r.text).join(" ").replace(/-\s+(?=\d)/g, "-"); // "Lab-" + "2" wrapped -> "Lab-2"
   text = text.replace(/\b\d+\s*\/\s*\d+\s*$/, "").trim();
   // Capacity/dedicated-department text can occasionally sneak into the room span.
   text = text.replace(/\s+(?:CSE|EEE|ECE|ENG|MAT|PHY|LAW|MDS|ECO|BA|SOC|SR|GEB|IS|DSS|MBA)\s*$/i, "").trim();
   return text || "Room TBA";
 }
 /* "19 / 40" -> { enrolled: 19, total: 40 }. The capacity and dedicated-department columns sit on the same line as the course code. */
-function nearestCapacity(rows, y) {
-  const row = rows.filter(r => Math.abs(r.centerY - y) <= 8 && /^\d+\s*\/\s*\d+$/.test(r.text)).sort((a, b) => Math.abs(a.centerY - y) - Math.abs(b.centerY - y))[0];
+function nearestCapacity(rows, y, tol = 8) {
+  const row = rows.filter(r => Math.abs(r.centerY - y) <= tol && /^\d+\s*\/\s*\d+$/.test(r.text)).sort((a, b) => Math.abs(a.centerY - y) - Math.abs(b.centerY - y))[0];
   if (!row) return null;
   const [enrolled, total] = row.text.split("/").map(n => Number(n.trim()));
   return { enrolled, total };
 }
-function nearestDedicated(rows, y) {
-  const row = rows.filter(r => Math.abs(r.centerY - y) <= 8).sort((a, b) => Math.abs(a.centerY - y) - Math.abs(b.centerY - y))[0];
+function nearestDedicated(rows, y, tol = 8) {
+  const row = rows.filter(r => Math.abs(r.centerY - y) <= tol).sort((a, b) => Math.abs(a.centerY - y) - Math.abs(b.centerY - y))[0];
   return row ? row.text.trim() : "";
 }
 function normalizeCourseCode(code) { return String(code).replace(/_/g, "").toUpperCase(); }
@@ -491,6 +592,7 @@ $("sectionPdfInput").addEventListener("change", async e => {
       const record = await importDepartmentPDF(file);
       state.imported = state.imported.filter(x => x.department !== record.department);
       state.imported.push(record);
+      if (record.rowsParsed < record.rowsExpected) errors.push(`${file.name}: ${record.rowsExpected - record.rowsParsed} of ${record.rowsExpected} rows could not be read, so some sections may be missing.`);
     } catch (err) { errors.push(`${file.name}: ${err.message}`); console.error(err); }
   }
   reconcile(); renderImported(); renderCourseList(); renderSelected();
